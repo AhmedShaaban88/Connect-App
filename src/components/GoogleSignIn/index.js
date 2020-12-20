@@ -26,6 +26,7 @@ export default function GoogleSignIn({setLoader}) {
         loginGoogle(tokenId,setLoader,setBackendError, goHome)
     };
 return <Fragment>
+    {backendError && <BackendError error={backendError}/> }
     <GoogleBtn
         clientId="4106995663-r8hno42va4em20m8jq7msdpel66a411d.apps.googleusercontent.com"
         buttonText="Login with Google"
@@ -34,7 +35,6 @@ return <Fragment>
         style={{'margin-bottom': '1em', 'background': 'red'}}
         cookiePolicy={'single_host_origin'}
     />
-    {backendError && <BackendError error={backendError}/> }
 
 </Fragment>
 };
