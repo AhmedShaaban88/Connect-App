@@ -13,10 +13,13 @@ import VerifyCode from "./pages/VerifyCode";
 import ResetPassword from "./pages/ResetPassword";
 import ForgetPassword from "./pages/ForgetPassword";
 import Dashboard from "./pages/Dashboard";
+import Header from "./components/Header";
+import {getFromLocalStorage} from "./helper/storage";
 
 ReactDOM.render(
     <ToastProvider>
     <Router>
+        {getFromLocalStorage('userData') && <Header />}
         <Switch>
             <PrivateRoute path="/dashboard" exact component={Dashboard} />
             <PublicRoute path="/" exact component={Login} />

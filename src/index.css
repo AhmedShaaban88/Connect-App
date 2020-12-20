@@ -16,3 +16,11 @@ body,html {
 a{
   cursor: pointer!important;
 }
+.ui.menu{
+  justify-content: center;
+}
+@media screen and (max-width: 380px){
+  .ui.menu{
+    font-size: 0.8em!important;
+  }
+}
