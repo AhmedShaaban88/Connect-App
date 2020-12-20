@@ -25,6 +25,7 @@ const login = (user, setLoader, setBackendError, goLink) => {
         });
 };
 const loginGoogle = (token, setLoader, setBackendError, goHome) => {
+    setLoader(true);
     axios.post('auth/login/google', token)
         .then(res => {
             setBackendError(null);
