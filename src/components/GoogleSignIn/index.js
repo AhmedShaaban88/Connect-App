@@ -23,7 +23,7 @@ export default function GoogleSignIn({setLoader}) {
     const goHome = () => history.push('/dashboard');
     const responseGoogle = (response) => {
         const {tokenId} = response;
-        loginGoogle(tokenId,setLoader,setBackendError, goHome)
+        loginGoogle({tokenId},setLoader,setBackendError, goHome)
     };
 return <Fragment>
     {backendError && <BackendError error={backendError}/> }
