@@ -24,8 +24,8 @@ const login = (user, setLoader, setBackendError, goLink) => {
             setLoader(false);
         });
 };
-const loginGoogle = (user, setLoader, setBackendError, goHome) => {
-    axios.post('auth/login/google', user)
+const loginGoogle = (token, setLoader, setBackendError, goHome) => {
+    axios.post('auth/login/google', token)
         .then(res => {
             setBackendError(null);
             setLoader(false);
@@ -120,4 +120,5 @@ export {login,register,
     isAuthenticated,sendForgetCode,
     verifyAccount, resendVerifyCode,
     resetPassword,
+    loginGoogle,
     logout}

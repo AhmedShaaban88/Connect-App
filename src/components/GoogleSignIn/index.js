@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useState, Fragment} from 'react';
 import GoogleLogin from 'react-google-login';
 import styled from "styled-components";
 import {useHistory} from "react-router";
-
-
+import {loginGoogle} from "../../utils/requests";
+import BackendError from "../BackendError";
 
 const GoogleBtn = styled(GoogleLogin)`
   margin-bottom: 1em;
@@ -17,17 +17,24 @@ const GoogleBtn = styled(GoogleLogin)`
     transition: background-color .3s,border-color .3s!important;
     padding: calc(.34435vw + 0.38843px) 1.04435vw!important;
 `;
-export default function GoogleSignIn() {
+export default function GoogleSignIn({setLoader}) {
     const history = useHistory();
+    const [backendError, setBackendError] = useState(null);
+    const goHome = () => history.push('/dashboard');
     const responseGoogle = (response) => {
-        console.log(response);
+        const {tokenId} = response;
+        loginGoogle(tokenId,setLoader,setBackendError, goHome)
     };
-return <GoogleBtn
-    clientId="4106995663-r8hno42va4em20m8jq7msdpel66a411d.apps.googleusercontent.com"
-    buttonText="Login with Google"
-    onSuccess={responseGoogle}
-    onFailure={responseGoogle}
-    style={{'margin-bottom': '1em', 'background': 'red'}}
-    cookiePolicy={'single_host_origin'}
-/>
+return <Fragment>
+    <GoogleBtn
+        clientId="4106995663-r8hno42va4em20m8jq7msdpel66a411d.apps.googleusercontent.com"
+        buttonText="Login with Google"
+        onSuccess={responseGoogle}
+        onFailure={() => setLoader(false)}
+        style={{'margin-bottom': '1em', 'background': 'red'}}
+        cookiePolicy={'single_host_origin'}
+    />
+    {backendError && <BackendError error={backendError}/> }
+
+</Fragment>
 };

@@ -10,6 +10,7 @@ import BackendError from "../../components/BackendError";
 import { Link } from 'react-router-dom'
 export default function Login() {
     const [isLoading, setLoading] = useState(false);
+    const [socialLoader, setSocialLoader] = useState(false);
     const [backendError, setBackendError] = useState(null);
     const history = useHistory();
     const [loginInput, setLoginInput] = useReducer(
@@ -50,7 +51,7 @@ export default function Login() {
             <Header as='h2' color='teal' textAlign='center'>
                 Welcome Back!
             </Header>
-            <Form size='large'>
+            <Form size='large' loading={socialLoader}>
                 <Segment stacked>
                     <Form.Input fluid icon='user'
                                 iconPosition='left'
@@ -89,7 +90,7 @@ export default function Login() {
                 <Divider horizontal>Or</Divider>
                 <Grid.Row>
                     <Grid.Column width={8}>
-                        <GoogleSignIn />
+                        <GoogleSignIn setLoader={setSocialLoader}/>
                     </Grid.Column>
                     <Grid.Column width={8}>
                         <FacebookSignIn/>
