@@ -24,6 +24,22 @@ const login = (user, setLoader, setBackendError, goLink) => {
             setLoader(false);
         });
 };
+const loginGoogle = (user, setLoader, setBackendError, goHome) => {
+    axios.post('auth/login/google', user)
+        .then(res => {
+            setBackendError(null);
+            setLoader(false);
+            saveInLocalStorage('userData', res.data);
+            axios.defaults.headers['Authorization'] =
+                'Bearer' + ' ' + JSON.parse(localStorage.getItem('userData'))?.token;
+            goHome();
+
+        })
+        .catch(err => {
+            setBackendError(catchError(err.response));
+            setLoader(false);
+        });
+};
 const verifyAccount = (user, setLoader, setBackendError, goHome) => {
     axios.post('auth/verify-account', user)
         .then(res => {

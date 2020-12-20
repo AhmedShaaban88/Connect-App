@@ -89,7 +89,7 @@ export default function Login() {
                 <Divider horizontal>Or</Divider>
                 <Grid.Row>
                     <Grid.Column width={8}>
-                        <GoogleSignIn/>
+                        <GoogleSignIn />
                     </Grid.Column>
                     <Grid.Column width={8}>
                         <FacebookSignIn/>

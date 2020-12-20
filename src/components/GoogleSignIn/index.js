@@ -1,10 +1,10 @@
 import React from 'react';
 import GoogleLogin from 'react-google-login';
 import styled from "styled-components";
+import {useHistory} from "react-router";
 
-const responseGoogle = (response) => {
-    console.log(response);
-}
+
+
 const GoogleBtn = styled(GoogleLogin)`
   margin-bottom: 1em;
   font-family: Helvetica,sans-serif!important;
@@ -16,10 +16,14 @@ const GoogleBtn = styled(GoogleLogin)`
     text-transform: uppercase!important;
     transition: background-color .3s,border-color .3s!important;
     padding: calc(.34435vw + 0.38843px) 1.04435vw!important;
-`
+`;
 export default function GoogleSignIn() {
+    const history = useHistory();
+    const responseGoogle = (response) => {
+        console.log(response);
+    };
 return <GoogleBtn
-    clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+    clientId="4106995663-r8hno42va4em20m8jq7msdpel66a411d.apps.googleusercontent.com"
     buttonText="Login with Google"
     onSuccess={responseGoogle}
     onFailure={responseGoogle}
