@@ -21,7 +21,7 @@ export default function VerifyCode({history}) {
             userId: userData.user_id,
             code: Number(code)
         };
-        const goHome = () => history.push('/dashboard');
+        const goHome = () => history.push('/auth/dashboard');
         verifyAccount(user, setLoading, setBackendError, goHome)
     };
     const validateForm = () => {

@@ -12,8 +12,8 @@ export default function NotFound (){
                 <Container>
                     <Grid textAlign='center' style={{ height: '100vh', padding: '0.5em' }} verticalAlign='middle'>
                         <Grid.Column>
-                            <Image style={{'margin-bottom': '2em'}} src={NotFoundImg} alt="not-found-img" fluid/>
-                            <Button animated color='violet' size="large">
+                            <Image style={{'marginBottom': '2em'}} src={NotFoundImg} alt="not-found-img" fluid/>
+                            <Button animated color='violet' size="large" onClick={() => goHome()}>
                                 <Button.Content visible>Back Home</Button.Content>
                                 <Button.Content hidden>
                                     <Icon name='arrow left' />
@@ -21,15 +21,6 @@ export default function NotFound (){
                             </Button>
                         </Grid.Column>
 
-                    {/*<Button>*/}
-                    {/*    ss*/}
-                    {/*    /!*<Col sm={12} className="text-center">*!/*/}
-                    {/*    /!*    <Button variant="outline-secondary" size="lg" onClick={goHome}>*!/*/}
-                    {/*    /!*        Back Home*!/*/}
-                    {/*    /!*    </Button>*!/*/}
-
-                    {/*    /!*</Col>*!/*/}
-                    {/*</Button>*/}
                     </Grid>
                 </Container>
         )

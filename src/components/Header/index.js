@@ -1,56 +1,84 @@
-import React, { Component } from 'react'
-import {Icon, Menu, Segment, Label} from 'semantic-ui-react'
+import React, { Fragment, useState } from 'react'
+import {Icon, Menu, Segment, Label, Dropdown} from 'semantic-ui-react'
+import {useHistory} from "react-router";
+import {getFromLocalStorage} from "../../helper/storage";
+import {logout} from "../../utils/requests";
 
-export default class Header extends Component {
-    state = { activeItem: 'home' }
-
-    handleItemClick = (e, { name }) => this.setState({ activeItem: name });
-
-    render() {
-        const { activeItem } = this.state;
-
-        return (
+export default function Header() {
+    const [activeItem, setActiveItem]  =useState('home');
+    const handleItemClick = (e, { name }) => setActiveItem(name);
+    const history = useHistory();
+    const goHome = () => history.push('/');
+    const signout = () => logout(goHome)
+    return (
+        getFromLocalStorage('userData') ?
             <Segment inverted>
                 <Menu icon='labeled' inverted secondary position='right'>
                     <Menu.Item
                         name='home'
                         active={activeItem === 'home'}
-                        onClick={this.handleItemClick}
+                        onClick={handleItemClick}
                     >
                         <Icon name='home' />
-                        Home
+                        <span className="menu-text">Home</span>
                     </Menu.Item>
                     <Menu.Item
                         name='messages'
                         active={activeItem === 'messages'}
-                        onClick={this.handleItemClick}
+                        onClick={handleItemClick}
                     >
                         <Icon name='facebook messenger' />
-                        Messages
+                        <span className="menu-text">Messages</span>
                         <Label color='red'>100</Label>
                     </Menu.Item>
                     <Menu.Item
                         name='friends'
                         active={activeItem === 'friends'}
-                        onClick={this.handleItemClick}
+                        onClick={handleItemClick}
                     >
                         <Label color='red'>100</Label>
 
                         <Icon name='user plus' />
-                        Friends
+                        <span className="menu-text">Friends</span>
                     </Menu.Item>
                     <Menu.Item
                         name='notifications'
                         active={activeItem === 'notifications'}
-                        onClick={this.handleItemClick}
+                        onClick={handleItemClick}
                     >
                         <Icon name='bell' />
-                        Notifications
+                        <span className="menu-text">Notifications</span>
                         <Label color='red'>100</Label>
 
                     </Menu.Item>
+                    <Menu.Menu position='right'>
+                    <Dropdown item text={<Fragment>
+                        <Icon name='user circle' />
+                        <span className="menu-text">Profile</span>
+                    </Fragment>}>
+                        <Dropdown.Menu>
+                            <Dropdown.Item>
+                                <Menu.Item
+                                    name='profile'
+                                    active={activeItem === 'profile'}
+                                    onClick={handleItemClick}
+                                >
+                                    My Profile
+                                </Menu.Item>
+                            </Dropdown.Item>
+                            <Dropdown.Item>
+                                <Menu.Item
+                                    name='logout'
+                                    active={activeItem === 'logout'}
+                                    onClick={signout}
+                                >
+                                    Logout
+                                </Menu.Item>
+                            </Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+                    </Menu.Menu>
                 </Menu>
-            </Segment>
-        )
-    }
+            </Segment> : null
+    )
 }

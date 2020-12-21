@@ -20,7 +20,7 @@ const GoogleBtn = styled(GoogleLogin)`
 export default function GoogleSignIn({setLoader}) {
     const history = useHistory();
     const [backendError, setBackendError] = useState(null);
-    const goHome = () => history.push('/dashboard');
+    const goHome = () => history.push('/auth/dashboard');
     const responseGoogle = (response) => {
         const {tokenId} = response;
         loginGoogle({tokenId},setLoader,setBackendError, goHome)

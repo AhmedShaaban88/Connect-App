@@ -93,7 +93,7 @@ export default function Login() {
                         <GoogleSignIn setLoader={setSocialLoader}/>
                     </Grid.Column>
                     <Grid.Column width={8}>
-                        {/*<FacebookSignIn/>*/}
+                        <FacebookSignIn setLoader={setSocialLoader}/>
                     </Grid.Column>
                 </Grid.Row>
 

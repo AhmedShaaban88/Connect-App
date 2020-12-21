@@ -16,11 +16,29 @@ body,html {
 a{
   cursor: pointer!important;
 }
-.ui.menu{
-  justify-content: center;
+.ui.menu .item>.label {
+  position: absolute;
+  top: -6px;
+  left: 30px;
 }
-@media screen and (max-width: 380px){
+.ui.labeled.icon.menu .item{
+  min-width: 5em!important;
+}
+.ui.inverted.icon.menu .item {
+  color: #bbbbbc!important;
+}
+.ui.menu .item>i.dropdown.icon, .ui.menu .right .menu .active.item>i.icon:last-child{
+  opacity: 0!important;
+}
+.ui.menu .dropdown.item .menu{
+  background: #1a1c1d!important;
+}
+@media screen and (max-width: 480px){
   .ui.menu{
     font-size: 0.8em!important;
+    justify-content: center;
+  }
+  .menu-text{
+    display: none;
   }
 }

@@ -13,7 +13,7 @@ const PublicRoute = ({ component: Component, ...rest }) => {
                 ) : (
                     <Redirect
                         to={{
-                            pathname: '/dashboard',
+                            pathname: '/auth/dashboard',
                             state: {
                                 from: routeProps.location,
                             },

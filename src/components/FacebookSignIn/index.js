@@ -1,16 +1,29 @@
-import React from 'react';
+import React, {Fragment, useState} from 'react';
 import FacebookLogin from 'react-facebook-login';
+import {useHistory} from "react-router";
+import BackendError from "../BackendError";
+import {loginFacebook} from "../../utils/requests";
 
-const responseFacebook = (response) => {
-    console.log(response);
-}
-export default function FacebookSignIn(){
-    return  <FacebookLogin
-        appId="1088597931155576"
-        autoLoad={true}
+export default function FacebookSignIn({setLoader}){
+    const history = useHistory();
+    const [backendError, setBackendError] = useState(null);
+    const goHome = () => history.push('/auth/dashboard');
+    const responseFacebook = (response) => {
+        console.log(response)
+       // const {tokenId} = response;
+        //loginFacebook({tokenId},setLoader,setBackendError, goHome)
+    };
+    return <Fragment>
+        {backendError && <BackendError error={backendError}/> }
+        <FacebookLogin
+        appId="463764117935801"
+        autoLoad={false}
         fields="name,email,picture"
         size="metro"
         icon="fa-facebook"
-       // onClick={componentClicked}
-        callback={responseFacebook} />
+        callback={responseFacebook}
+        onFailure={() => setLoader(false)}/>
+    </Fragment>
+
+
 }

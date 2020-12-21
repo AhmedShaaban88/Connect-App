@@ -12,7 +12,7 @@ const login = (user, setLoader, setBackendError, goLink) => {
                 saveInLocalStorage('userData', res.data);
                 axios.defaults.headers['Authorization'] =
                     'Bearer' + ' ' + JSON.parse(localStorage.getItem('userData'))?.token;
-                goLink('/dashboard');
+                goLink('/auth/dashboard');
             }else{
                 saveInSessionStorage('user', res.data);
                 goLink('/verify-code');
@@ -27,6 +27,23 @@ const login = (user, setLoader, setBackendError, goLink) => {
 const loginGoogle = (token, setLoader, setBackendError, goHome) => {
     setLoader(true);
     axios.post('auth/login/google', token)
+        .then(res => {
+            setBackendError(null);
+            setLoader(false);
+            saveInLocalStorage('userData', res.data);
+            axios.defaults.headers['Authorization'] =
+                'Bearer' + ' ' + JSON.parse(localStorage.getItem('userData'))?.token;
+            goHome();
+
+        })
+        .catch(err => {
+            setBackendError(catchError(err.response));
+            setLoader(false);
+        });
+};
+const loginFacebook = (token, setLoader, setBackendError, goHome) => {
+    setLoader(true);
+    axios.post('auth/login/facebook', token)
         .then(res => {
             setBackendError(null);
             setLoader(false);
@@ -114,7 +131,7 @@ const register = (user, setLoader, setBackendError, goVerify) => {
 const logout = (goHome) => {
     localStorage.clear();
     axios.defaults.headers['Authorization'] = '';
-    goHome();
+    goHome ? goHome() : window.location.assign("/");
 };
 const isAuthenticated = () => getFromLocalStorage('userData');
 export {login,register,
@@ -122,4 +139,5 @@ export {login,register,
     verifyAccount, resendVerifyCode,
     resetPassword,
     loginGoogle,
+    loginFacebook,
     logout}
