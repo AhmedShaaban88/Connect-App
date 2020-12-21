@@ -9,9 +9,8 @@ export default function FacebookSignIn({setLoader}){
     const [backendError, setBackendError] = useState(null);
     const goHome = () => history.push('/auth/dashboard');
     const responseFacebook = (response) => {
-        console.log(response)
-       // const {tokenId} = response;
-        //loginFacebook({tokenId},setLoader,setBackendError, goHome)
+       const {accessToken, userID} = response;
+        loginFacebook({accessToken: accessToken, userId: userID},setLoader,setBackendError, goHome)
     };
     return <Fragment>
         {backendError && <BackendError error={backendError}/> }

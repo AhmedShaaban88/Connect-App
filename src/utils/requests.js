@@ -41,9 +41,9 @@ const loginGoogle = (token, setLoader, setBackendError, goHome) => {
             setLoader(false);
         });
 };
-const loginFacebook = (token, setLoader, setBackendError, goHome) => {
+const loginFacebook = (data, setLoader, setBackendError, goHome) => {
     setLoader(true);
-    axios.post('auth/login/facebook', token)
+    axios.post('auth/login/facebook', data)
         .then(res => {
             setBackendError(null);
             setLoader(false);
