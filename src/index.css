@@ -33,6 +33,12 @@ a{
 .ui.menu .dropdown.item .menu{
   background: #1a1c1d!important;
 }
+.ui.medium.image{
+  width: 150px!important;
+  height: 150px!important;
+  object-fit: cover;
+  margin: 1em auto;
+}
 @media screen and (max-width: 480px){
   .ui.menu{
     font-size: 0.8em!important;

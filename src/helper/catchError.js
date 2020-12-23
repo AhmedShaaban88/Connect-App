@@ -5,7 +5,7 @@ export default function catchError(response) {
         case 400:
         case 409:
         case 404:
-            return response.data.errors ? response.data.errors : response.data.error;
+            return response.data.errors ? response.data.errors : (response.data.error ? response.data.error : response.data);
         case 401:
             logout(null);
             return response.data?.data?.message;

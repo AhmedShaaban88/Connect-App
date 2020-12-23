@@ -1,6 +1,6 @@
 // all backend requests
 import axios from './API';
-import {getFromLocalStorage, getFromSessionStorage, saveInLocalStorage, saveInSessionStorage} from "../helper/storage";
+import {getFromLocalStorage, saveInLocalStorage, saveInSessionStorage} from "../helper/storage";
 import catchError from "../helper/catchError";
 
 const login = (user, setLoader, setBackendError, goLink) => {
@@ -128,6 +128,33 @@ const register = (user, setLoader, setBackendError, goVerify) => {
             setLoader(false);
         });
 };
+const getInfoData = (id,setUser, setLoader, setBackendError) => {
+    axios.get( `profile/view/${id}`)
+        .then(res => {
+            setBackendError(null);
+            setLoader(false);
+            setUser(res.data);
+        })
+        .catch(err => {
+            setBackendError(catchError(err.response));
+            setLoader(false);
+            setUser(null);
+        });
+};
+const updateProfile = (user, setLoader, setBackendError, showToast) => {
+    axios.put('profile/edit', user)
+        .then(res => {
+            setBackendError(null);
+            setLoader(false);
+            saveInLocalStorage('userData', {...getFromLocalStorage('userData'), ...res.data});
+            showToast();
+        })
+        .catch(err => {
+            setBackendError(catchError(err.response));
+            setLoader(false);
+        });
+};
+
 const logout = (goHome) => {
     localStorage.clear();
     axios.defaults.headers['Authorization'] = '';
@@ -140,4 +167,6 @@ export {login,register,
     resetPassword,
     loginGoogle,
     loginFacebook,
+    getInfoData,
+    updateProfile,
     logout}

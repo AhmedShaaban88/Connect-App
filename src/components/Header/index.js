@@ -6,10 +6,15 @@ import {logout} from "../../utils/requests";
 
 export default function Header() {
     const [activeItem, setActiveItem]  =useState('home');
-    const handleItemClick = (e, { name }) => setActiveItem(name);
+    const handleItemClick = (e, { name }) => {
+        setActiveItem(name);
+        if(name === 'profile'){
+            history.push(`/auth/profile/${getFromLocalStorage('userData').userId}`)
+        }
+    };
     const history = useHistory();
     const goHome = () => history.push('/');
-    const signout = () => logout(goHome)
+    const signout = () => logout(goHome);
     return (
         getFromLocalStorage('userData') ?
             <Segment inverted>

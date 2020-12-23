@@ -18,7 +18,7 @@ const RemovePrev = styled.span`
   color: white;
 `;
 
-export default function PreviewAvatar({ image, setAvatarPrev, setAvatar }) {
+export default function PreviewAvatar({ image, setAvatarPrev, setAvatar, prev=false }) {
     const removeImage = e => {
         setAvatarPrev(null);
         document.getElementById('upload-photo').value = '';
@@ -27,6 +27,7 @@ export default function PreviewAvatar({ image, setAvatarPrev, setAvatar }) {
         })
     };
     return (
+        prev ? <Image src={image} size='medium' circular />:
         <Fragment>
             <PrevImage src={image} fluid />
             <RemovePrev onClick={removeImage}>x</RemovePrev>
@@ -37,4 +38,5 @@ PreviewAvatar.propTypes = {
     image: PropTypes.string,
     setAvatarPrev: PropTypes.func,
     setAvatar: PropTypes.func,
+    prev: PropTypes.bool
 };

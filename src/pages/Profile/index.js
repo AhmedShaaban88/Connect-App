@@ -1,36 +1,35 @@
-// import React, {Fragment, useEffect, useState} from "react";
-// import {Navbar, Nav} from "react-bootstrap";
-// import {useHistory} from "react-router";
-// import {logout, deleteUser, userInfo} from "../../utils/requests";
-// import { useToasts } from 'react-toast-notifications'
-// import EditProfile from "../EditProfile";
-//
-// export default function Profile() {
-//     const history = useHistory();
-//     const [user, setUser] =useState(null);
-//     const {addToast} = useToasts();
-//     const goHome = () => history.push('/');
-//     const signOut = () => logout(goHome);
-//     const deleteSuccess = () => addToast('Delete user successfully', { appearance: 'success', autoDismiss: true});
-//     const deleteFailed = () => addToast('Failed to delete user', { appearance: 'error', autoDismiss: true});
-//     const deleteAcount = () => deleteUser(deleteSuccess, deleteFailed, signOut);
-//     useEffect(() => {
-//         userInfo(setUser)
-//     }, []);
-//     return(
-//         <Fragment>
-//         <Navbar bg="light" expand="lg" className="justify-content-between">
-//             <Navbar.Brand href="#home">Netway Task</Navbar.Brand>
-//             <Navbar.Toggle aria-controls="basic-navbar-nav" />
-//             <Navbar.Collapse id="basic-navbar-nav">
-//                 <Nav className="ml-auto">
-//                     <Nav.Link href="#link" onClick={signOut}>Logout</Nav.Link>
-//                     <Nav.Link href="#link" className="text-danger" onClick={deleteAcount}>Delete Account</Nav.Link>
-//                 </Nav>
-//             </Navbar.Collapse>
-//         </Navbar>
-//             {!user ? <p>loading...</p> : <EditProfile user={user?.data}/>}
-//         </Fragment>
-//
-//     )
-// }
+import React, {useState} from "react";
+import {Menu} from "semantic-ui-react";
+import InfoPage from "./InfoPage";
+import Posts from "./Posts";
+import Friends from "./Friends";
+
+export default function Profile() {
+    const [activeItem, setActiveItem]  =useState('info');
+    const handleItemClick = (e, { name }) => {
+        setActiveItem(name);
+    };
+    return             <div>
+        <Menu pointing secondary>
+            <Menu.Item
+                name='info'
+                active={activeItem === 'info'}
+                onClick={handleItemClick}
+            />
+            <Menu.Item
+                name='posts'
+                active={activeItem === 'posts'}
+                onClick={handleItemClick}
+            />
+            <Menu.Item
+                name='friends'
+                active={activeItem === 'friends'}
+                onClick={handleItemClick}
+            />
+        </Menu>
+        {activeItem === 'info' && <InfoPage/>}
+        {activeItem === 'posts' && <Posts/>}
+        {activeItem === 'friends' && <Friends/>}
+    </div>
+
+}
