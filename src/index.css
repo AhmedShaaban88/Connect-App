@@ -39,6 +39,13 @@ a{
   object-fit: cover;
   margin: 1em auto;
 }
+.ui.card{
+  margin-top: 0.5em!important;
+  margin-bottom: 0.3em!important;
+}
+.lazy{
+  margin: auto;
+}
 @media screen and (max-width: 480px){
   .ui.menu{
     font-size: 0.8em!important;

@@ -154,7 +154,19 @@ const updateProfile = (user, setLoader, setBackendError, showToast) => {
             setLoader(false);
         });
 };
-
+const getYourFriends = (id, page,setFriends, setLoader, setBackendError) => {
+    axios.get( `/friendship/friends/${id}?limit=8&page=${page}`)
+        .then(res => {
+            setBackendError(null);
+            setLoader(false);
+            setFriends(res.data.docs);
+        })
+        .catch(err => {
+            setBackendError(catchError(err.response));
+            setLoader(false);
+            setFriends(null);
+        });
+};
 const logout = (goHome) => {
     localStorage.clear();
     axios.defaults.headers['Authorization'] = '';
@@ -169,4 +181,5 @@ export {login,register,
     loginFacebook,
     getInfoData,
     updateProfile,
+    getYourFriends,
     logout}
