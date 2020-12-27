@@ -1,4 +1,3 @@
-//check all input with regular expression
 const checkRegExp = (key, value, regex, errorSetter) => {
     if(value !== ''){
         return regex.test(value)

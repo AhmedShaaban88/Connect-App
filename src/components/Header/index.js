@@ -1,9 +1,9 @@
-import React, { Fragment, useState } from 'react'
+import React, {Fragment, useState} from 'react'
 import {Icon, Menu, Segment, Label, Dropdown} from 'semantic-ui-react'
 import {useHistory} from "react-router";
 import {getFromLocalStorage} from "../../helper/storage";
 import {logout} from "../../utils/requests";
-
+import FriendShip from "./FriendShip";
 export default function Header() {
     const [activeItem, setActiveItem]  =useState('home');
     const handleItemClick = (e, { name }) => {
@@ -11,6 +11,7 @@ export default function Header() {
         if(name === 'profile'){
             history.push(`/auth/profile/${getFromLocalStorage('userData').userId}`)
         }
+        else if(name === 'friendship') history.push('/auth/friend-requests');
     };
     const history = useHistory();
     const goHome = () => history.push('/');
@@ -36,16 +37,7 @@ export default function Header() {
                         <span className="menu-text">Messages</span>
                         <Label color='red'>100</Label>
                     </Menu.Item>
-                    <Menu.Item
-                        name='friends'
-                        active={activeItem === 'friends'}
-                        onClick={handleItemClick}
-                    >
-                        <Label color='red'>100</Label>
-
-                        <Icon name='user plus' />
-                        <span className="menu-text">Friends</span>
-                    </Menu.Item>
+                    <FriendShip name="friendship" active={activeItem === 'friendship'} handleClick={handleItemClick}/>
                     <Menu.Item
                         name='notifications'
                         active={activeItem === 'notifications'}

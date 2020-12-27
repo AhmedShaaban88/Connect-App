@@ -45,6 +45,15 @@ a{
 }
 .lazy{
   margin: auto;
+  text-align: -webkit-center;
+  text-align: -moz-center;
+  text-align: center;
+}
+.lazy-parent{
+  max-height: 900px;
+ overflow-y: auto;
+  overflow-x: hidden;
+  cursor: pointer;
 }
 @media screen and (max-width: 480px){
   .ui.menu{

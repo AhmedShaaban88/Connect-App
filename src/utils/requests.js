@@ -154,12 +154,18 @@ const updateProfile = (user, setLoader, setBackendError, showToast) => {
             setLoader(false);
         });
 };
-const getYourFriends = (id, page,setFriends, setLoader, setBackendError) => {
-    axios.get( `/friendship/friends/${id}?limit=8&page=${page}`)
+const getYourFriends = (id, page,setPage, setFriends, setLoader, setBackendError, setPages) => {
+    axios.get( `/friendship/friends/${id}?limit=5&page=${page}`)
         .then(res => {
             setBackendError(null);
             setLoader(false);
-            setFriends(res.data.docs);
+            if(page > 1){
+               setFriends([...setPages, ...res.data.docs]);
+            }else{
+                setFriends(res.data.docs);
+                setPages(res.data.pages);
+            }
+            setPage(page++);
         })
         .catch(err => {
             setBackendError(catchError(err.response));

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Grid, Card, Container, Placeholder, Loader} from "semantic-ui-react";
+import {Grid, Card, Container, Placeholder, Loader, Message} from "semantic-ui-react";
 import BackendError from "../../components/BackendError";
 import {useHistory, useParams} from "react-router";
 import {getYourFriends} from "../../utils/requests";
@@ -11,17 +11,17 @@ export default function Friends() {
     const [backendError, setBackendError] = useState(null);
     const [friends, setFriends] =useState(null);
     const [page, setPage] =useState(1);
+    const [totalPages, setTotalPages] =useState(1);
     const {id} = useParams();
-    useEffect(() => {
-        getYourFriends(id,page,setFriends,setLoading,setBackendError);
-    }, []);
-    useEffect(()=>{
-        setLoading(true);
-        setFriends(null);
-        setPage(1);
-        getYourFriends(id,page,setFriends,setLoading,setBackendError);
-    },[id]);
 
+    useEffect(()=>{
+        getYourFriends(id,page,setPage, setFriends,setLoading,setBackendError, setTotalPages);
+    },[id]);
+    const loadMoreFriends = (page) => {
+        if(totalPages >= page){
+            getYourFriends(id,page,setPage,setFriends,setLoading,setBackendError, friends);
+        }
+    };
     return <Container>
         {isLoading &&
         <Card.Group itemsPerRow={3}>
@@ -49,32 +49,39 @@ export default function Friends() {
         </Card.Group>
         }
         {friends &&
+            <div className="lazy-parent">
+        <InfiniteScroll
+            pageStart={page}
+            loadMore={loadMoreFriends}
+            hasMore={totalPages > page}
+            loader={<Loader active inline='centered' />}
+            className="lazy"
+            useWindow={false}
+        >
         <Grid>
 
                 <Grid.Row>
-                    <InfiniteScroll
-                        pageStart={page}
-                        //loadMore={loadFunc}
-                        hasMore={true}
-                        loader={<Loader active inline='centered' />}
-                        className="lazy"
-                    >
-                    {friends.map(friend => (
-                        <Grid.Column mobile={16} tablet={8} computer={4} key={friend._id} onClick={() => history.push(`/auth/profile/${friend.recipient._id}`)}>
-                            <Card
-                                image={friend.recipient.avatar ? friend.recipient.avatar : defaultImage}
-                                header={friend.recipient.name}
-                                meta={friend.recipient.email ? friend.recipient.email : friend.recipient.phone}
-                            />
-                        </Grid.Column>
-                    ))}
-                    </InfiniteScroll>
+
+                            {friends.map(friend => (
+                                <Grid.Column mobile={16} tablet={8} computer={4} key={friend._id} onClick={() => history.push(`/auth/profile/${friend.recipient._id}`)}>
+                                    <Card
+                                        image={friend.recipient.avatar ? friend.recipient.avatar : defaultImage}
+                                        header={friend.recipient.name ? friend.recipient.name : ''}
+                                        meta={friend.recipient.email ? friend.recipient.email : friend.recipient.phone}
+                                    />
+                                </Grid.Column>
+                            ))}
+
                 </Grid.Row>
 
-
-
         </Grid>
+        </InfiniteScroll>
+            </div>
         }
+        {friends?.length === 0 && <Message negative>
+            <Message.Header>We're sorry you haven't any friend</Message.Header>
+        </Message>}
+
         {backendError && <BackendError error={backendError}/> }
 
     </Container>
