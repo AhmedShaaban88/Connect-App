@@ -155,7 +155,7 @@ const updateProfile = (user, setLoader, setBackendError, showToast) => {
         });
 };
 const getYourFriends = (id, page,setPage, setFriends, setLoader, setBackendError, setPages) => {
-    axios.get( `/friendship/friends/${id}?limit=5&page=${page}`)
+    axios.get( `friendship/friends/${id}?limit=8&page=${page}`)
         .then(res => {
             setBackendError(null);
             setLoader(false);
@@ -173,6 +173,86 @@ const getYourFriends = (id, page,setPage, setFriends, setLoader, setBackendError
             setFriends(null);
         });
 };
+const friendActions = (type,id,setLoader, setBackendError,setStatus, status) =>{
+    axios.put( `friendship/${type}`,{recipient: id})
+        .then(res => {
+            setBackendError(null);
+            setLoader(false);
+            switch (status) {
+                case 0:
+                    setStatus({status: 1});
+                    break;
+                case 'accept':
+                    setStatus({status: 3});
+                    break;
+                default:
+                    setStatus({status: 0});
+                    break;
+            }
+        })
+        .catch(err => {
+            setBackendError(catchError(err.response));
+            setLoader(false);
+        });
+};
+const friendAcceptReject = (type,id,_this,callback) =>{
+    axios.put( `friendship/${type}`,{recipient: id})
+        .then(res => {
+            _this.setState({
+                backendError: null,
+                friendLoadingItem: null,
+                skip: --_this.state.skip
+            });
+            if (type === 'accept') {
+                _this.setState({
+                    friendAcceptItems: [..._this.state.friendAcceptItems, id]
+                });
+            } else {
+                _this.setState({
+                    friendRejectItems: [..._this.state.friendRejectItems, id]
+                });
+            }
+            callback();
+        })
+        .catch(err => {
+            _this.setState({
+                backendError: catchError(err.response),
+                friendLoadingItem: null,
+            });
+        });
+};
+const getYourFriendRequests = (_this, prevThis) => {
+    axios.get( `friendship/requests?limit=5&skip=${_this.state.skip}`)
+        .then(res => {
+            _this.setState({
+                loading: false,
+                backendError: null
+            });
+            if(_this.state.page > 1){
+                _this.setState({
+                    requests: [..._this.state.requests, ...res.data.docs]
+                });
+            }else{
+                _this.setState({
+                    total: Math.ceil(res.data.total/5),
+                    requests: res.data.docs
+                })
+            }
+            _this.setState({
+                page: ++_this.state.page,
+                skip: _this.state.skip+=5
+            });
+            if(prevThis.state.count !== res.data.total){
+                prevThis.setState({count: res.data.total})
+            }
+        }).catch(err => {
+            _this.setState({
+                loading: false,
+                backendError: catchError(err.response),
+                requests: null
+            });
+        });
+};
 const logout = (goHome) => {
     localStorage.clear();
     axios.defaults.headers['Authorization'] = '';
@@ -188,4 +268,7 @@ export {login,register,
     getInfoData,
     updateProfile,
     getYourFriends,
+    friendActions,
+    getYourFriendRequests,
+    friendAcceptReject,
     logout}

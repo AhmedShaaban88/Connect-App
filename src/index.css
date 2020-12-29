@@ -55,6 +55,34 @@ a{
   overflow-x: hidden;
   cursor: pointer;
 }
+.notifiy .notify-content{
+  display: inline-block;
+  margin-left: 0.6em;
+}
+.react-toast-notifications__toast--info .react-toast-notifications__toast__icon-wrapper{
+  display: none!important;
+}
+.list{
+  position: absolute;
+  z-index: 9999;
+  background-color: #1a1c1d;
+  width: 250px;
+  padding: 20px!important;
+  top: 50px;
+  height: 300px;
+  overflow-y: auto;
+}
+.ui.list>.item>.content {
+  font-size: 1.3em;
+  padding: 0.3em !important;
+}
+.ui.list>.item>img.image+.content{
+  width: 100%!important;
+}
+.msg-btn{
+  display: block!important;
+  margin: 10px auto!important;
+}
 @media screen and (max-width: 480px){
   .ui.menu{
     font-size: 0.8em!important;

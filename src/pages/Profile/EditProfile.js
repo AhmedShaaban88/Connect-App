@@ -2,20 +2,19 @@ import React, {useReducer, useState} from "react";
 import {handleChange} from "../../helper/handleControlChange";
 import {passwordReg, nicknameReg, personalEmailReg, phoneReg} from "../../helper/regex";
 import BackendError from "../../components/BackendError";
-import {updateProfile} from "../../utils/requests";
+import {friendActions, updateProfile} from "../../utils/requests";
 import Avatar from "../../components/Avatar";
 import PreviewAvatar from "../../components/Avatar/previewAvatar";
 import {getFromLocalStorage} from "../../helper/storage";
-import {Button, Container, Form, Grid, Header, Icon, Segment, Dropdown} from "semantic-ui-react";
+import {Button, Container, Form, Grid, Header, Segment} from "semantic-ui-react";
 import {useToasts} from "react-toast-notifications";
-
 export default function EditProfile({user}) {
     const [isLoading, setLoading] = useState(false);
+    const [friendLoading, setFriendLoading] = useState(false);
     const [backendError, setBackendError] = useState(null);
     const [avatarPrev, setAvatarPrev] = useState(user.avatar ? user.avatar : null);
     const type = user.email ? 'email' : 'phone';
     const { addToast } = useToasts();
-
     const [loginInput, setLoginInput] = useReducer(
         (state, newState) => ({ ...state, ...newState }),
         {
@@ -65,6 +64,10 @@ export default function EditProfile({user}) {
             setBackendError( 'Some fields are incorrect');
         }
 
+    };
+    const friendActionFunc = (type, status) => {
+        setFriendLoading(true);
+        friendActions(type, user._id,setFriendLoading ,setBackendError, setLoginInput, status);
     };
     return <Grid textAlign='center' style={{height: '30vh', padding: '0.5em'}} verticalAlign='middle'>
         {loginInput.editable ?  <Grid.Column style={{maxWidth: '100%'}}>
@@ -136,15 +139,16 @@ export default function EditProfile({user}) {
 
             <h1>{loginInput.name}</h1>
             <p>{loginInput.email}</p>
-            {loginInput.status === 0 && <Button icon="user plus" content="Add Friend"/>}
-            {loginInput.status === 1 && <Button negative>Remove</Button>}
+            {loginInput.status === 0 && <Button icon="user plus" disabled={friendLoading} loading={friendLoading} content="Add Friend" onClick={e => friendActionFunc('add', loginInput.status)}/>}
+            {loginInput.status === 1 && <Button loading={friendLoading} disabled={friendLoading} negative onClick={e => friendActionFunc('remove', loginInput.status)}>Remove</Button>}
             {loginInput.status === 2 &&  <Button.Group>
-                <Button negative>Reject</Button>
+                <Button negative loading={friendLoading} disabled={friendLoading} onClick={e => friendActionFunc('remove', 'reject')}>Reject</Button>
                 <Button.Or />
-                <Button positive>Accept</Button>
+                <Button positive loading={friendLoading} disabled={friendLoading} onClick={e => friendActionFunc('accept', 'accept')}>Accept</Button>
             </Button.Group>}
-            {loginInput.status === 3 && <Button secondary icon="user delete" content="Remove Friend"/>}
-
+            {loginInput.status === 3 && <Button loading={friendLoading} disabled={friendLoading} secondary icon="user delete" onClick={e => friendActionFunc('remove', loginInput.status)} content="Remove Friend"/>}
+            <Button icon="envelope" content="Message" className="msg-btn" secondary/>
+            {backendError && <BackendError error={backendError}/> }
         </Container>}
 
         </Grid>

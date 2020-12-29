@@ -6,19 +6,38 @@ import {logout} from "../../utils/requests";
 import FriendShip from "./FriendShip";
 export default function Header() {
     const [activeItem, setActiveItem]  =useState('home');
+    const [listShow, setListShow] = useState({
+        friendShip: false
+    });
     const handleItemClick = (e, { name }) => {
         setActiveItem(name);
         if(name === 'profile'){
-            history.push(`/auth/profile/${getFromLocalStorage('userData').userId}`)
+            history.push(`/auth/profile/${getFromLocalStorage('userData').userId}`);
+            setListShow({
+                friendShip: false
+            });
+        }else if(name === 'friendship'){
+            setListShow({
+                friendShip: true
+            });
+        }else if(name === 'home'){
+            setListShow({
+                friendShip: false
+            });
         }
-        else if(name === 'friendship') history.push('/auth/friend-requests');
+    };
+    const checkClick = (e) => {
+        const elem = e.target.tagName;
+        if(elem !== 'I' && elem !== 'SPAN' && elem !== 'BUTTON'){
+            setListShow({friendShip: false});
+        }
     };
     const history = useHistory();
     const goHome = () => history.push('/');
     const signout = () => logout(goHome);
     return (
         getFromLocalStorage('userData') ?
-            <Segment inverted>
+            <Segment inverted onClick={checkClick}>
                 <Menu icon='labeled' inverted secondary position='right'>
                     <Menu.Item
                         name='home'
@@ -37,7 +56,7 @@ export default function Header() {
                         <span className="menu-text">Messages</span>
                         <Label color='red'>100</Label>
                     </Menu.Item>
-                    <FriendShip name="friendship" active={activeItem === 'friendship'} handleClick={handleItemClick}/>
+                    <FriendShip name="friendship" active={listShow.friendShip === true} handleClick={handleItemClick}/>
                     <Menu.Item
                         name='notifications'
                         active={activeItem === 'notifications'}

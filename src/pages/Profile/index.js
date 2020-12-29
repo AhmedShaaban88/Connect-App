@@ -4,7 +4,7 @@ import InfoPage from "./InfoPage";
 import Posts from "./Posts";
 import Friends from "./Friends";
 
-export default function Profile() {
+export default function Profile(props) {
     const [activeItem, setActiveItem]  =useState('info');
     const handleItemClick = (e, { name }) => {
         setActiveItem(name);
