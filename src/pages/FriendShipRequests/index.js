@@ -5,6 +5,7 @@ import BackendError from "../../components/BackendError";
 import defaultAvatar from "../../assets/images/user.png";
 import InfiniteScroll from "react-infinite-scroller";
 import {withRouter} from "react-router";
+import {Link} from "react-router-dom";
 
 class FriendShipRequests extends Component {
 constructor(props) {
@@ -83,10 +84,11 @@ constructor(props) {
                     }
 
                 {requests?.length === 0 && <Message negative>
-                    <Message.Header>We're sorry you haven't any friend requests</Message.Header>
+                    <Message.Header>We're sorry you haven't any friend requests <Link to="/auth/search-friends">Search</Link></Message.Header>
                 </Message>}
 
                 {backendError && <BackendError error={backendError}/> }
+
             </List>
 
 

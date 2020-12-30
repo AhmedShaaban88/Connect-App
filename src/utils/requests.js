@@ -253,6 +253,34 @@ const getYourFriendRequests = (_this, prevThis) => {
             });
         });
 };
+const searchFriend = (_this, value, page) => {
+    axios.get( `friendship/search?limit=5&page=${page ? page : _this.state.page}&q=${value}`)
+        .then(res => {
+            _this.setState({
+                backendError: null,
+                isLoading: false,
+            });
+            if(page){
+                _this.setState({
+                    results: [..._this.state.results, ...res.data.docs],
+                    page: page
+                });
+            }else{
+                _this.setState({
+                    results: res.data.docs,
+                    total: res.data.pages,
+                    page: _this.state.page++
+                });
+            }
+        })
+        .catch(err => {
+            _this.setState({
+                backendError: catchError(err.response),
+                isLoading: false,
+                results: []
+            });
+        });
+};
 const logout = (goHome) => {
     localStorage.clear();
     axios.defaults.headers['Authorization'] = '';
@@ -271,4 +299,5 @@ export {login,register,
     friendActions,
     getYourFriendRequests,
     friendAcceptReject,
+    searchFriend,
     logout}
