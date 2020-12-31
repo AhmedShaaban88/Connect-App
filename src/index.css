@@ -83,6 +83,31 @@ a{
   display: block!important;
   margin: 10px auto!important;
 }
+.comment{
+  margin-left: 0.3em!important;
+}
+.notification{
+  text-align: left!important;
+  border-bottom: 1px solid grey!important;
+}
+.desc-notify{
+  padding: 0.4em;
+}
+.notification-list{
+  padding: 5px!important;
+}
+.text-muted{
+  color: darkgray;
+}
+.text-white{
+  color: white!important;
+}
+.text-center{
+  text-align: center!important;
+}
+.liked{
+  padding-right: 5em;
+}
 @media screen and (max-width: 480px){
   .ui.menu{
     font-size: 0.8em!important;
@@ -90,5 +115,8 @@ a{
   }
   .menu-text{
     display: none;
+  }
+  .ui.menu .item>.label {
+    left: 18px;
   }
 }

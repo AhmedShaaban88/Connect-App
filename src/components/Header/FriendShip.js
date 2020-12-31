@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {Icon, Image, Label, Menu} from "semantic-ui-react";
 import io from 'socket.io-client';
 import withToast from "../withToast";
-import {getFromLocalStorage, getFromSessionStorage} from "../../helper/storage";
+import {getFromLocalStorage} from "../../helper/storage";
 import defaultAvatar from "../../assets/images/user.png";
 import {withRouter} from "react-router";
 import FriendShipRequests from "../../pages/FriendShipRequests";

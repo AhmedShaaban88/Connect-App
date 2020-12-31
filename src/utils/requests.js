@@ -173,6 +173,25 @@ const getYourFriends = (id, page,setPage, setFriends, setLoader, setBackendError
             setFriends(null);
         });
 };
+const getYourPosts = (id, page,setPage, setPosts, setLoader, setBackendError, setPages) => {
+    axios.get( `profile/view/${id}/posts?limit=8&page=${page}`)
+        .then(res => {
+            setBackendError(null);
+            setLoader(false);
+            if(page > 1){
+                setPosts([...setPages, ...res.data.docs]);
+            }else{
+                setPosts(res.data.docs);
+                setPages(res.data.pages);
+            }
+            setPage(page++);
+        })
+        .catch(err => {
+            setBackendError(catchError(err.response));
+            setLoader(false);
+            setPosts(null);
+        });
+};
 const friendActions = (type,id,setLoader, setBackendError,setStatus, status) =>{
     axios.put( `friendship/${type}`,{recipient: id})
         .then(res => {
@@ -253,6 +272,34 @@ const getYourFriendRequests = (_this, prevThis) => {
             });
         });
 };
+const getYourNotifications = (_this) => {
+    axios.get( `notifications?limit=10&page=${_this.state.page}`)
+        .then(res => {
+            _this.setState({
+                loading: false,
+                backendError: null
+            });
+            if(_this.state.page > 1){
+                _this.setState({
+                    notifications: [..._this.state.notifications, ...res.data.docs]
+                });
+            }else{
+                _this.setState({
+                    total: res.data.pages,
+                    notifications: res.data.docs
+                })
+            }
+            _this.setState({
+                page: ++_this.state.page,
+            });
+        }).catch(err => {
+            _this.setState({
+                loading: false,
+                backendError: catchError(err.response),
+                notifications: null
+            });
+        });
+};
 const searchFriend = (_this, value, page) => {
     axios.get( `friendship/search?limit=5&page=${page ? page : _this.state.page}&q=${value}`)
         .then(res => {
@@ -298,6 +345,8 @@ export {login,register,
     getYourFriends,
     friendActions,
     getYourFriendRequests,
+    getYourNotifications,
     friendAcceptReject,
     searchFriend,
+    getYourPosts,
     logout}

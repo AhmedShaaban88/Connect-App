@@ -4,10 +4,12 @@ import {useHistory} from "react-router";
 import {getFromLocalStorage} from "../../helper/storage";
 import {logout} from "../../utils/requests";
 import FriendShip from "./FriendShip";
+import Notifications from "./Notifications";
 export default function Header() {
     const [activeItem, setActiveItem]  =useState('home');
     const [listShow, setListShow] = useState({
-        friendShip: false
+        friendShip: false,
+        notifications: false
     });
     const handleItemClick = (e, { name }) => {
         setActiveItem(name);
@@ -18,18 +20,25 @@ export default function Header() {
             });
         }else if(name === 'friendship'){
             setListShow({
-                friendShip: true
+                friendShip: true,
+                notifications: false
             });
         }else if(name === 'home'){
             setListShow({
-                friendShip: false
+                friendShip: false,
+                notifications: false
+            });
+        }else if(name === 'notifications'){
+            setListShow({
+                friendShip: false,
+                notifications: true
             });
         }
     };
     const checkClick = (e) => {
         const elem = e.target.tagName;
         if(elem !== 'I' && elem !== 'SPAN' && elem !== 'BUTTON'){
-            setListShow({friendShip: false});
+            setListShow({friendShip: false, notifications: false});
         }
     };
     const history = useHistory();
@@ -57,16 +66,8 @@ export default function Header() {
                         <Label color='red'>100</Label>
                     </Menu.Item>
                     <FriendShip name="friendship" active={listShow.friendShip === true} handleClick={handleItemClick}/>
-                    <Menu.Item
-                        name='notifications'
-                        active={activeItem === 'notifications'}
-                        onClick={handleItemClick}
-                    >
-                        <Icon name='bell' />
-                        <span className="menu-text">Notifications</span>
-                        <Label color='red'>100</Label>
+                    <Notifications name="notifications" active={listShow.notifications === true} handleClick={handleItemClick}/>
 
-                    </Menu.Item>
                     <Menu.Menu position='right'>
                     <Dropdown item text={<Fragment>
                         <Icon name='user circle' />

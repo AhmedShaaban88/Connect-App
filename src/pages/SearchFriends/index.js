@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Grid, Loader, List, Image, Message, Input, Card, Container} from 'semantic-ui-react'
+import {Grid, Loader, Message, Input, Card, Container} from 'semantic-ui-react'
 import {searchFriend} from "../../utils/requests";
 import InfiniteScroll from "react-infinite-scroller";
 import defaultAvatar from "../../assets/images/user.png";
