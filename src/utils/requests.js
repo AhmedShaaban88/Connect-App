@@ -328,6 +328,49 @@ const searchFriend = (_this, value, page) => {
             });
         });
 };
+const postLikes = (id, setLoader, setBackendError,setLikes) => {
+    axios.get(`like/${id}`)
+        .then(res => {
+            setBackendError(null);
+            setLoader(false);
+            setLikes(res.data)
+        })
+        .catch(err => {
+            setBackendError(catchError(err.response));
+            setLoader(false);
+        });
+};
+const getPostComments = (_this) => {
+    axios.get(`comment/${_this.state.id}?limit=5&skip=${_this.state.skip}`)
+        .then(res => {
+            _this.setState({
+                loading: false,
+                backendError: null
+            });
+            if(_this.state.page > 1){
+                _this.setState({
+                    comments: [..._this.state.comments, ...res.data.docs],
+                    moreLoader: false,
+                });
+            }else{
+                _this.setState({
+                    total: Math.ceil(res.data.total/5),
+                    comments: res.data.docs
+                })
+            }
+            _this.setState({
+                page: ++_this.state.page,
+                skip: _this.state.skip+=5
+            });
+        }).catch(err => {
+        _this.setState({
+            loading: false,
+            moreLoader: false,
+            backendError: catchError(err.response),
+            comments: null
+        });
+    });
+};
 const logout = (goHome) => {
     localStorage.clear();
     axios.defaults.headers['Authorization'] = '';
@@ -349,4 +392,6 @@ export {login,register,
     friendAcceptReject,
     searchFriend,
     getYourPosts,
+    postLikes,
+    getPostComments,
     logout}

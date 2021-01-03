@@ -105,8 +105,23 @@ a{
 .text-center{
   text-align: center!important;
 }
+.text-danger{
+  color: red!important;
+}
 .liked{
   padding-right: 5em;
+}
+.load-text{
+  color: #2385d0;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ui.comments:last-child {
+  margin-bottom: 10px!important;
+}
+.ui.tiny.image, .ui.tiny.images .image, .ui.tiny.images img, .ui.tiny.images svg{
+  width: 125px!important;
+  height: 125px!important;
 }
 @media screen and (max-width: 480px){
   .ui.menu{

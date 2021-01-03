@@ -1,8 +1,23 @@
-import React, {useEffect, useState} from "react";
-import {Dropdown, Container, Grid, Feed, Icon, Message, Placeholder, Button} from "semantic-ui-react";
+import React, {useEffect, useState, Fragment} from "react";
+import {
+    Dropdown,
+    Container,
+    Grid,
+    Comment,
+    Icon,
+    Message,
+    Placeholder,
+    Button,
+    Loader,
+    Header, Form
+} from "semantic-ui-react";
 import {useHistory, useParams} from "react-router";
 import {getYourPosts} from "../../utils/requests";
 import BackendError from "../../components/BackendError";
+import defaultAvatar from "../../assets/images/user.png";
+import Moment from "react-moment";
+import {getFromLocalStorage} from "../../helper/storage";
+
 
 export default function Posts() {
     const history = useHistory();
@@ -60,74 +75,49 @@ export default function Posts() {
         </Placeholder>
 
         }
-        <Feed>
-            <Feed.Event>
-                <Dropdown
-                    options={options}
-                    icon={false}
-                    trigger={<span>
+        <Fragment>
+            <Dropdown
+                options={options}
+                icon={false}
+                trigger={<span>
     <Icon name='ellipsis vertical' />
   </span>}
-                />
-                <Feed.Label image='/images/avatar/small/joe.jpg' />
-                <Feed.Content>
-                    <Feed.Summary>
-                        <a>Joe Henderson</a>
-                        <Feed.Date>3 days ago</Feed.Date>
-                    </Feed.Summary>
-                    <Feed.Extra text>
-                        Ours is a life of constant reruns. We're always circling back to where
-                        we'd we started, then starting all over again. Even if we don't run
-                        extra laps that day, we surely will come back for more of the same
-                        another day soon.
-                    </Feed.Extra>
-                    <Feed.Extra images>
-                        <img src='https://react.semantic-ui.com/images/wireframe/image.png' />
-                        <img src='https://react.semantic-ui.com/images/wireframe/image.png' />
-                        <video src="" />
-                    </Feed.Extra>
-                    <Feed.Meta>
-                        <Feed>
-                            <Icon name='like' />5 Likes
-                            <Icon name='comment' />5 Comments
-                        </Feed>
-                    </Feed.Meta>
-                </Feed.Content>
-            </Feed.Event>
-            <Feed.Event>
-                <Dropdown
-                    options={options}
-                    icon={false}
-                    trigger={<span>
-    <Icon name='ellipsis vertical' />
-  </span>}
-                />
-                <Feed.Label image='/images/avatar/small/joe.jpg' />
-                <Feed.Content>
-                    <Feed.Summary>
-                        <a>Joe Henderson</a>
-                        <Feed.Date>3 days ago</Feed.Date>
-                    </Feed.Summary>
-                    <Feed.Extra text>
-                        Ours is a life of constant reruns. We're always circling back to where
-                        we'd we started, then starting all over again. Even if we don't run
-                        extra laps that day, we surely will come back for more of the same
-                        another day soon.
-                    </Feed.Extra>
-                    <Feed.Extra images>
-                        <img src='https://react.semantic-ui.com/images/wireframe/image.png' />
-                        <img src='https://react.semantic-ui.com/images/wireframe/image.png' />
-                        <video src="" />
-                    </Feed.Extra>
-                    <Feed.Meta>
-                        <Feed>
-                            <Icon name='like' />5 Likes
-                            <Icon name='comment' />5 Comments
-                        </Feed>
-                    </Feed.Meta>
-                </Feed.Content>
-            </Feed.Event>
-        </Feed>
+            />
+            <Comment.Group>
+                {posts && posts.map(post => (
+                    <Comment key={post._id}>
+                        <Comment.Avatar src={getFromLocalStorage('userData')?.avatar ? getFromLocalStorage('userData')?.avatar : defaultAvatar} />
+                        <Comment.Content>
+                            <Comment.Author as='a'>{getFromLocalStorage('userData')?.name ? getFromLocalStorage('userData')?.name  : (
+                                post.author?.email ? post.author?.email : post.author.phone
+                            )}</Comment.Author>
+                            <Comment.Metadata>
+                                <div>
+                                    <Moment fromNow>
+                                        {new Date(post.updated_at)}
+                                    </Moment>
+                                </div>
+                            </Comment.Metadata>
+                            <Comment.Text>{post.content}</Comment.Text>
+                            {/*<Comment.Actions>*/}
+
+                            {/*    {comment.author._id === getFromLocalStorage('userData')?.userId &&  <Comment.Action>*/}
+                            {/*        <Icon name="edit" />*/}
+                            {/*        Edit*/}
+                            {/*    </Comment.Action>}*/}
+
+                            {/*    <Comment.Action className="text-danger">*/}
+                            {/*        <Icon name="remove" />*/}
+                            {/*        Delete*/}
+                            {/*    </Comment.Action>*/}
+                            {/*</Comment.Actions>*/}
+                        </Comment.Content>
+                    </Comment>
+                ))}
+                {/*{(total >= page && !moreLoader && !loading) && <p className="text-center load-text" onClick={this.loadMoreComments}>Load More Comments</p> }*/}
+                {/*{moreLoader && <Loader active inline='centered' /> }*/}
+            </Comment.Group>
+        </Fragment>
 
         {posts?.length === 0 && <Message negative>
             <Message.Header>We're sorry you haven't any posts</Message.Header>
