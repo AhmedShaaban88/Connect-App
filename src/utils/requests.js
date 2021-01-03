@@ -371,6 +371,85 @@ const getPostComments = (_this) => {
         });
     });
 };
+const deletComment = (_this,commentId) => {
+    axios.delete(`comment/${_this.state.id}`, {data:{commentId: commentId}})
+        .then(res => {
+            const comments = _this.state.comments.filter(comment => comment._id !== commentId);
+            _this.setState({
+                backendError: null,
+                skip: --_this.state.skip,
+                userActionLoader: false,
+                comments
+            });
+        })
+        .catch(err => {
+            _this.setState({
+                backendError: catchError(err.response),
+                loading: false,
+                userActionLoader: false,
+            });
+        });
+};
+const addComment = (_this, comment) => {
+    axios.put(`comment/${_this.state.id}`, comment).then(res => {
+        _this.setState({
+            backendError: null,
+            addCommentLoader: false,
+            skip: ++_this.state.skip,
+            content: '',
+            files:[],
+            filesPrev: [],
+            comments: [res.data, ..._this.state.comments]
+        });
+    }).catch(err => {
+        _this.setState({
+            backendError: catchError(err.response),
+            addCommentLoader: false,
+        });
+    })
+};
+const getComment = (_this) => {
+    axios.get(`comment/${_this.state.postId}/${_this.state.id}`).then(res => {
+        if(res.data?.author !== getFromLocalStorage('userData')?.userId){
+            _this.props.history.push('/');
+        }
+        else {
+            _this.setState({
+                backendError: null,
+                addCommentLoader: false,
+                loading: false,
+                comment: res.data,
+                content: res.data.content,
+            });
+        }
+    }).catch(err => {
+        _this.setState({
+            backendError: catchError(err.response),
+            loading: false,
+            addCommentLoader: false,
+            comment: null
+        });
+        _this.props.history.push('/');
+    })
+};
+const updateComment = (_this, comment) => {
+    axios.put(`comment/edit/${_this.state.postId}/${_this.state.id}`, comment).then(res => {
+        _this.setState({
+            backendError: null,
+            addCommentLoader: false,
+            content: res.data.content,
+            files:[],
+            filesPrev: [],
+            deletedMedia: [],
+            comment: res.data
+        });
+    }).catch(err => {
+        _this.setState({
+            backendError: catchError(err.response),
+            addCommentLoader: false,
+        });
+    })
+};
 const logout = (goHome) => {
     localStorage.clear();
     axios.defaults.headers['Authorization'] = '';
@@ -394,4 +473,8 @@ export {login,register,
     getYourPosts,
     postLikes,
     getPostComments,
+    deletComment,
+    addComment,
+    getComment,
+    updateComment,
     logout}

@@ -123,6 +123,15 @@ a{
   width: 125px!important;
   height: 125px!important;
 }
+.remove-icon{
+  color: red!important;
+  font-size: 20px!important;
+  z-index: 999!important;
+  display: inline-block!important;
+}
+.deleting{
+  opacity: 0.3;
+}
 @media screen and (max-width: 480px){
   .ui.menu{
     font-size: 0.8em!important;
