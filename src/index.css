@@ -132,6 +132,13 @@ a{
 .deleting{
   opacity: 0.3;
 }
+.float-right{
+  float: right!important;
+}
+.ui.dropdown .menu{
+  right: 0!important;
+  left: auto!important;
+}
 @media screen and (max-width: 480px){
   .ui.menu{
     font-size: 0.8em!important;

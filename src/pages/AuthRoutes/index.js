@@ -8,7 +8,8 @@ import Profile from "../Profile";
 import Comments from "../Feed/Comments";
 import Likes from "../Feed/Likes";
 import SearchFriends from "../SearchFriends";
-import EditFeed from "../Feed/EditFeed";
+import EditComment from "../Feed/EditComment";
+import EditPost from "../Feed/EditPost";
 
 export default function AuthRoutes() {
     return(
@@ -18,8 +19,9 @@ export default function AuthRoutes() {
              <PrivateRoute path="/auth/dashboard" exact component={Dashboard} />
              <PrivateRoute path="/auth/profile/:id" exact component={Profile} key={window.location.pathname}/>
              <PrivateRoute path="/auth/post/:id/comments" exact component={Comments}/>
-             <PrivateRoute path="/auth/post/:postId/:id" exact component={EditFeed}/>
              <PrivateRoute path="/auth/post/:id/likes" exact component={Likes}/>
+             <PrivateRoute path="/auth/post/edit/:id" exact component={EditPost}/>
+             <PrivateRoute path="/auth/post/:postId/:id" exact component={EditComment}/>
              <PrivateRoute path="/auth/search-friends" exact component={SearchFriends}/>
              <Route path="**" component={NotFound}/>
          </Switch>

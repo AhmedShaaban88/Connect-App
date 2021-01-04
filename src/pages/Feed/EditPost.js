@@ -7,44 +7,44 @@ import {
     Image,
     Placeholder,
 } from "semantic-ui-react";
-import {Redirect, withRouter} from "react-router";
+import {withRouter} from "react-router";
 import BackendError from "../../components/BackendError";
 import CommentUpload from "./CommentUpload";
 import {getFromLocalStorage} from "../../helper/storage";
-import {getComment, updateComment} from "../../utils/requests";
+import {getPost, updatePost} from "../../utils/requests";
 import isVideo from "../../helper/isVideo";
-class EditFeed extends Component{
+class EditPost extends Component{
     constructor(props) {
         super(props);
-        this.state = {postId: this.props.match.params.postId,id: this.props.match.params.id,
-            loading: true,comment: null,
+        this.state = {id: this.props.match.params.id,
+            loading: true,post: null,
             backendError: null, files: [],
             filesPrev: [], content: '',
-           addCommentLoader: false, deletedMedia: []};
-         this.uploadComment = this.uploadComment.bind(this);
+           addPostLoader: false, deletedMedia: []};
+         this.uploadPost = this.uploadPost.bind(this);
     }
     componentDidMount() {
-        getComment(this);
+        getPost(this);
     }
-    uploadComment(){
-        let commentData = new FormData();
+    uploadPost(){
+        let postData = new FormData();
         if (this.state?.content.trim() !== '' || this.state.files.length > 0) {
-                commentData.append(
+                postData.append(
                     'content',
                     this.state.content.trim()
                 );
             if(this.state.files.length > 0){
-                this.state.files.map(file => commentData.append('media', file))
+                this.state.files.map(file => postData.append('media', file))
             }
             if(this.state.deletedMedia.length > 0){
-                this.state.deletedMedia.map(file => commentData.append('deletedFiles[]', file.title))
+                this.state.deletedMedia.map(file => postData.append('deletedFiles[]', file.title))
             }
-            this.setState({addCommentLoader: true});
-            updateComment(this, commentData);
+            this.setState({addPostLoader: true});
+            updatePost(this, postData);
         }
     }
     render() {
-        const {loading, backendError, content, addCommentLoader, comment, deletedMedia} = this.state;
+        const {loading, backendError, content, addPostLoader, post, deletedMedia} = this.state;
         return <Container>
             {loading &&  <Placeholder>
                 <Placeholder.Header image>
@@ -58,13 +58,13 @@ class EditFeed extends Component{
                     <Placeholder.Line />
                 </Placeholder.Paragraph>
             </Placeholder>}
-            {comment?.author === getFromLocalStorage('userData')?.userId &&
-                <Form reply loading={addCommentLoader}>
+            {(post?.author._id === getFromLocalStorage('userData')?.userId || post?.author === getFromLocalStorage('userData')?.userId) &&
+                <Form reply loading={addPostLoader}>
                     <Form.TextArea value={content} onChange={e => this.setState({content: e.target.value})}/>
                     <CommentUpload _this={this} />
 
                         <Image.Group size='tiny'>
-                            {comment?.media && comment?.media.map(media => (
+                            {post?.media && post?.media.map(media => (
                                 isVideo(media.path) ? <div>
                                         <Image key={media._id} as="a" href={media.path} className={deletedMedia.indexOf(media) > -1 ? 'deleting' : ""}
                                                               target='_blank' src={'https://react.semantic-ui.com//images/image-16by9.png'} />
@@ -79,7 +79,7 @@ class EditFeed extends Component{
 
                                 ))}
                         </Image.Group>
-                    <Button content='Update Comment' disabled={addCommentLoader} secondary onClick={this.uploadComment}/>
+                    <Button content='Update Post' disabled={addPostLoader} secondary onClick={this.uploadPost}/>
                 </Form> }
 
             {backendError && <BackendError error={backendError}/> }
@@ -88,4 +88,4 @@ class EditFeed extends Component{
 
 
 }
-export default withRouter(EditFeed);
+export default withRouter(EditPost);

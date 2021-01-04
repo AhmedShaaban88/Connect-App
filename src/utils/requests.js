@@ -340,6 +340,70 @@ const postLikes = (id, setLoader, setBackendError,setLikes) => {
             setLoader(false);
         });
 };
+const likePost = (id,setBackendError) => {
+    axios.put(`like/post/${id}`)
+        .then(res => {
+            setBackendError(null);
+        })
+        .catch(err => {
+            setBackendError(catchError(err.response));
+        });
+};
+const getPost = (_this) => {
+    axios.get(`post/${_this.state.id}`).then(res => {
+        if(res.data?.author._id !== getFromLocalStorage('userData')?.userId){
+            _this.props.history.push('/');
+        }
+        else {
+            _this.setState({
+                backendError: null,
+                addPostLoader: false,
+                loading: false,
+                post: res.data,
+                content: res.data.content,
+            });
+        }
+    }).catch(err => {
+        _this.setState({
+            backendError: catchError(err.response),
+            loading: false,
+            addPostLoader: false,
+            post: null
+        });
+        _this.props.history.push('/');
+    })
+};
+const updatePost = (_this, post) => {
+    axios.put(`post/${_this.state.id}`, post).then(res => {
+        _this.setState({
+            backendError: null,
+            addPostLoader: false,
+            content: res.data.content,
+            files:[],
+            filesPrev: [],
+            deletedMedia: [],
+            post: res.data
+        });
+    }).catch(err => {
+        _this.setState({
+            backendError: catchError(err.response),
+            addPostLoader: false,
+        });
+    })
+};
+const deletPost = (id, setBackendError,setPost, posts, setDeleteId) => {
+    axios.delete(`post/${id}`, {data:{id: id}})
+        .then(res => {
+            const _posts = posts.filter(post => post._id !== id);
+            setBackendError(null);
+            setPost(_posts);
+            setDeleteId(null);
+        })
+        .catch(err => {
+            setBackendError(catchError(err.response));
+            setDeleteId(null);
+        });
+};
 const getPostComments = (_this) => {
     axios.get(`comment/${_this.state.id}?limit=5&skip=${_this.state.skip}`)
         .then(res => {
@@ -378,7 +442,7 @@ const deletComment = (_this,commentId) => {
             _this.setState({
                 backendError: null,
                 skip: --_this.state.skip,
-                userActionLoader: false,
+                deletingCommentId: null,
                 comments
             });
         })
@@ -386,7 +450,7 @@ const deletComment = (_this,commentId) => {
             _this.setState({
                 backendError: catchError(err.response),
                 loading: false,
-                userActionLoader: false,
+                deletingCommentId: null,
             });
         });
 };
@@ -477,4 +541,8 @@ export {login,register,
     addComment,
     getComment,
     updateComment,
+    likePost,
+    getPost,
+    updatePost,
+    deletPost,
     logout}

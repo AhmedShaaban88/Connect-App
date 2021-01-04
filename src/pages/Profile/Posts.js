@@ -9,27 +9,26 @@ import {
     Placeholder,
     Button,
     Loader,
-    Header, Form
+    Label, Image, Divider, GridColumn
 } from "semantic-ui-react";
 import {useHistory, useParams} from "react-router";
-import {getYourPosts} from "../../utils/requests";
+import {deletPost, getYourPosts, likePost} from "../../utils/requests";
 import BackendError from "../../components/BackendError";
 import defaultAvatar from "../../assets/images/user.png";
 import Moment from "react-moment";
 import {getFromLocalStorage} from "../../helper/storage";
+import isVideo from "../../helper/isVideo";
+import InfiniteScroll from "react-infinite-scroller";
 
 
 export default function Posts() {
     const history = useHistory();
     const [isLoading, setLoading] = useState(true);
     const [backendError, setBackendError] = useState(null);
+    const [deletePostId, setDeletePostId] = useState(null);
     const [posts, setPosts] =useState(null);
     const [page, setPage] =useState(1);
     const [totalPages, setTotalPages] =useState(1);
-    const options = [
-        { key: 'edit', icon: 'edit', text: 'Edit Post', value: 'edit' },
-        { key: 'delete', icon: 'delete', text: 'Remove Post', value: 'delete' },
-    ]
     const {id} = useParams();
     useEffect(()=>{
         getYourPosts(id,page,setPage, setPosts,setLoading,setBackendError, setTotalPages);
@@ -38,6 +37,19 @@ export default function Posts() {
         if(totalPages >= page){
             getYourPosts(id,page,setPage,setPosts,setLoading,setBackendError, posts);
         }
+    };
+    const likePostFunc = (e,post) =>{
+        if(post.likes.indexOf(getFromLocalStorage('userData')?.userId) > -1){
+            post.likes = post.likes.filter(like => like !== getFromLocalStorage('userData')?.userId);
+        }else{
+            post.likes = post.likes.concat(getFromLocalStorage('userData')?.userId);
+        }
+        setPosts([...posts, post]);
+        likePost(post._id, setBackendError);
+    };
+    const removePost = (e, id) => {
+        setDeletePostId(id);
+        deletPost(id, setBackendError, setPosts, posts, setDeletePostId);
     };
     return <Container>
         {isLoading &&
@@ -73,22 +85,33 @@ export default function Posts() {
                 <Placeholder.Line />
             </Placeholder.Paragraph>
         </Placeholder>
-
         }
-        <Fragment>
-            <Dropdown
-                options={options}
-                icon={false}
-                trigger={<span>
-    <Icon name='ellipsis vertical' />
-  </span>}
-            />
-            <Comment.Group>
-                {posts && posts.map(post => (
-                    <Comment key={post._id}>
-                        <Comment.Avatar src={getFromLocalStorage('userData')?.avatar ? getFromLocalStorage('userData')?.avatar : defaultAvatar} />
+            <div className="lazy-parent">
+            {posts && <InfiniteScroll
+                pageStart={page}
+                loadMore={loadMorePosts}
+                hasMore={totalPages > page}
+                loader={<Loader active inline='centered'/>}
+                useWindow={false}
+            >
+                <Comment.Group>
+                {posts.map(post => (
+                    <Comment key={post._id} className={deletePostId === post._id ? 'deleting' : ''}>
+                        {(post.author === getFromLocalStorage('userData')?.userId && deletePostId === null) &&
+                        <Dropdown className="float-right" icon={<span>
+                              <Icon name='ellipsis vertical'/>
+                                </span>}>
+                            <Dropdown.Menu>
+                                <Dropdown.Item text='Edit' icon="edit" onClick={() => history.push(`/auth/post/edit/${post._id}`)}/>
+                                <Dropdown.Item text='Delete' icon="delete" onClick={e => removePost(e, post._id)}/>
+                            </Dropdown.Menu>
+                        </Dropdown>
+                        }
+                        <Comment.Avatar
+                            src={getFromLocalStorage('userData')?.avatar ? getFromLocalStorage('userData')?.avatar : defaultAvatar}/>
                         <Comment.Content>
-                            <Comment.Author as='a'>{getFromLocalStorage('userData')?.name ? getFromLocalStorage('userData')?.name  : (
+                            <Comment.Author
+                                as='a'>{getFromLocalStorage('userData')?.name ? getFromLocalStorage('userData')?.name : (
                                 post.author?.email ? post.author?.email : post.author.phone
                             )}</Comment.Author>
                             <Comment.Metadata>
@@ -99,25 +122,54 @@ export default function Posts() {
                                 </div>
                             </Comment.Metadata>
                             <Comment.Text>{post.content}</Comment.Text>
-                            {/*<Comment.Actions>*/}
-
-                            {/*    {comment.author._id === getFromLocalStorage('userData')?.userId &&  <Comment.Action>*/}
-                            {/*        <Icon name="edit" />*/}
-                            {/*        Edit*/}
-                            {/*    </Comment.Action>}*/}
-
-                            {/*    <Comment.Action className="text-danger">*/}
-                            {/*        <Icon name="remove" />*/}
-                            {/*        Delete*/}
-                            {/*    </Comment.Action>*/}
-                            {/*</Comment.Actions>*/}
+                            <Image.Group size='tiny'>
+                                {post?.media && post?.media.map(media => (
+                                    isVideo(media.path) ? <Image key={media._id} as="a" href={media.path}
+                                                                 target='_blank'
+                                                                 src={'https://react.semantic-ui.com//images/image-16by9.png'}/> :
+                                        <Image key={media._id} as="a" href={media.path}
+                                               target='_blank' src={media.path}/>
+                                ))}
+                            </Image.Group>
+                            <Grid>
+                                <GridColumn computer={8} tablet={8} mobile={16}>
+                                    <Button as='div' labelPosition='right'>
+                                        <Button
+                                            color={post.likes.indexOf(getFromLocalStorage('userData')?.userId) > -1 ? 'red' : 'white'}
+                                            onClick={e => likePostFunc(e, post)}>
+                                            <Icon name='heart'/>
+                                            {post.likes.indexOf(getFromLocalStorage('userData')?.userId) > -1 ? 'Unlink' : 'Like'}
+                                        </Button>
+                                        <Label as='a' basic color='red' pointing='left'
+                                               onClick={() => history.push(`/auth/post/${post._id}/likes`)}>
+                                            {post.likes?.length}
+                                        </Label>
+                                    </Button>
+                                </GridColumn>
+                                <GridColumn computer={8} tablet={8} mobile={16}>
+                                    <Button as='div' labelPosition='right'
+                                            onClick={() => history.push(`/auth/post/${post._id}/comments`)}>
+                                        <Button color='blue'>
+                                            <Icon name='comment'/>
+                                            Add Comment
+                                        </Button>
+                                        <Label as='a' basic color='blue' pointing='left'>
+                                            {post.comments?.length}
+                                        </Label>
+                                    </Button>
+                                </GridColumn>
+                            </Grid>
                         </Comment.Content>
+                        <Divider/>
                     </Comment>
                 ))}
-                {/*{(total >= page && !moreLoader && !loading) && <p className="text-center load-text" onClick={this.loadMoreComments}>Load More Comments</p> }*/}
-                {/*{moreLoader && <Loader active inline='centered' /> }*/}
-            </Comment.Group>
-        </Fragment>
+                </Comment.Group>
+            </InfiniteScroll>
+            }
+            </div>
+
+
+
 
         {posts?.length === 0 && <Message negative>
             <Message.Header>We're sorry you haven't any posts</Message.Header>

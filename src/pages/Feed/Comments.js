@@ -25,7 +25,7 @@ class Comments extends Component{
         this.state = {id: this.props.match.params.id,loading: true,
             backendError: null, files: [], filesPrev: [], content: '',
             comments: null, page: 1, total: 1,skip: 0,
-            moreLoader: false, userActionLoader: false, addCommentLoader: false};
+            moreLoader: false, deletingCommentId: null, addCommentLoader: false};
         this.loadMoreComments = this.loadMoreComments.bind(this);
         this.uploadComment = this.uploadComment.bind(this);
     }
@@ -55,7 +55,7 @@ class Comments extends Component{
         }
     }
     render() {
-        const {loading, comments, backendError, page, total, moreLoader, userActionLoader, content, addCommentLoader, id} = this.state;
+        const {loading, comments, backendError, page, total, moreLoader, deletingCommentId, content, addCommentLoader, id} = this.state;
         return <Container>
             {loading &&  <Placeholder>
                 <Placeholder.Header image>
@@ -72,7 +72,7 @@ class Comments extends Component{
 
             <Comment.Group>
                 {comments && comments.map(comment => (
-                        <Comment key={comment._id}>
+                        <Comment key={comment._id} className={deletingCommentId === comment._id ? 'deleting' : ''}>
                             <Comment.Avatar onClick={() => this.props.history.push(`/auth/profile/${comment.author._id}`)} src={comment.author?.avatar ? comment.author.avatar : defaultAvatar} />
                             <Comment.Content>
                                 <Comment.Author onClick={() => this.props.history.push(`/auth/profile/${comment.author._id}`)} as='a'>{comment.author?.name ? comment.author.name : (
@@ -95,7 +95,7 @@ class Comments extends Component{
                                                target='_blank' src={media.path} />
                                     ))}
                                 </Image.Group>
-                                {!userActionLoader && <Comment.Actions>
+                                {deletingCommentId === null && <Comment.Actions>
 
                                     {comment.author._id === getFromLocalStorage('userData')?.userId &&  <Comment.Action onClick={() => this.props.history.push(`/auth/post/${id}/${comment._id}`)}>
                                         <Icon name="edit" />
@@ -104,7 +104,7 @@ class Comments extends Component{
 
                                     {(comment.author._id === getFromLocalStorage('userData')?.userId || comment.post.author === getFromLocalStorage('userData')?.userId) &&
                                     <Comment.Action className="text-danger" onClick={() => {
-                                        this.setState({userActionLoader: true});
+                                        this.setState({deletingCommentId: comment._id});
                                         deletComment(this,comment._id);
                                     }}>
                                         <Icon name="remove" />
