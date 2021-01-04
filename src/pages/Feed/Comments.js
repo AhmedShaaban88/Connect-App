@@ -124,7 +124,7 @@ class Comments extends Component{
                     <Button content='Add Comment' disabled={addCommentLoader} labelPosition='left' icon='comment' secondary onClick={this.uploadComment}/>
                 </Form>
             </Comment.Group>
-            {comments?.length === 0 && <Message negative>
+            {(comments?.length === 0 && !loading) && <Message negative>
                 <Message.Header>There aren't any comments on this post</Message.Header>
             </Message>}
 

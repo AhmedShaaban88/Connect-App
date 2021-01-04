@@ -58,7 +58,7 @@ export default function Likes() {
 
                 </Grid>
         }
-        {likes?.length === 0 && <Message negative>
+        {(likes?.length === 0 && !isLoading) && <Message negative>
             <Message.Header>there aren't any likes on this post</Message.Header>
         </Message>}
 

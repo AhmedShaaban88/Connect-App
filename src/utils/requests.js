@@ -349,6 +349,19 @@ const likePost = (id,setBackendError) => {
             setBackendError(catchError(err.response));
         });
 };
+const likePostDashboard = (id,_this) => {
+    axios.put(`like/post/${id}`)
+        .then(res => {
+            _this.setState({
+                backendError: null
+            })
+        })
+        .catch(err => {
+            _this.setState({
+                backendError: catchError(err.response)
+            })
+        });
+};
 const getPost = (_this) => {
     axios.get(`post/${_this.state.id}`).then(res => {
         if(res.data?.author._id !== getFromLocalStorage('userData')?.userId){
@@ -383,6 +396,25 @@ const updatePost = (_this, post) => {
             filesPrev: [],
             deletedMedia: [],
             post: res.data
+        });
+    }).catch(err => {
+        _this.setState({
+            backendError: catchError(err.response),
+            addPostLoader: false,
+        });
+    })
+};
+const createPost = (_this, post) => {
+    axios.post(`post/create`, post).then(res => {
+        const _posts = [res.data.post, ..._this.state.posts];
+        _this.setState({
+            backendError: null,
+            addPostLoader: false,
+            content: '',
+            files:[],
+            filesPrev: [],
+            skip: ++_this.state.skip,
+            posts: _posts
         });
     }).catch(err => {
         _this.setState({
@@ -514,6 +546,53 @@ const updateComment = (_this, comment) => {
         });
     })
 };
+const getDashboard = (_this) => {
+    axios.get(`dashboard?limit=10&skip=${_this.state.skip}`).then(res => {
+        _this.setState({
+            backendError: null,
+            loading: false,
+        });
+        if(_this.state.page > 1){
+            _this.setState({
+                posts: [..._this.state.posts, ...res.data.docs],
+                moreLoader: false,
+            });
+        }else{
+            _this.setState({
+                total: res.data.totalPages,
+                posts: res.data.docs
+            })
+        }
+        _this.setState({
+            page: ++_this.state.page,
+            skip: _this.state.skip+=10
+        });
+    }).catch(err => {
+        _this.setState({
+            backendError: catchError(err.response),
+            loading: false,
+            moreLoader: false,
+        });
+    })
+};
+const deletPostDashboard = (id, _this) => {
+    axios.delete(`post/${id}`, {data:{id: id}})
+        .then(res => {
+            const _posts = _this.state.posts.filter(post => post._id !== id);
+            _this.setState({
+                backendError: null,
+                deletePostId: null,
+                posts: _posts,
+                skip: --_this.state.skip,
+            });
+        })
+        .catch(err => {
+            _this.setState({
+                backendError: catchError(err.response),
+                deletePostId: null
+            });
+        });
+};
 const logout = (goHome) => {
     localStorage.clear();
     axios.defaults.headers['Authorization'] = '';
@@ -543,6 +622,10 @@ export {login,register,
     updateComment,
     likePost,
     getPost,
+    createPost,
     updatePost,
     deletPost,
+    getDashboard,
+    likePostDashboard,
+    deletPostDashboard,
     logout}

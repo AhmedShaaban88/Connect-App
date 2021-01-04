@@ -78,7 +78,7 @@ export default function Friends() {
         </InfiniteScroll>
             </div>
         }
-        {friends?.length === 0 && <Message negative>
+        {(friends?.length === 0 && !isLoading) && <Message negative>
             <Message.Header>We're sorry you haven't any friend</Message.Header>
         </Message>}
 

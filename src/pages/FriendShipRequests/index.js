@@ -83,7 +83,7 @@ constructor(props) {
                 </InfiniteScroll>
                     }
 
-                {requests?.length === 0 && <Message negative>
+                {(requests?.length === 0 && !loading) && <Message negative>
                     <Message.Header>We're sorry you haven't any friend requests <Link to="/auth/search-friends">Search</Link></Message.Header>
                 </Message>}
 

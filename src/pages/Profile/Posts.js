@@ -108,10 +108,10 @@ export default function Posts() {
                         </Dropdown>
                         }
                         <Comment.Avatar
-                            src={getFromLocalStorage('userData')?.avatar ? getFromLocalStorage('userData')?.avatar : defaultAvatar}/>
+                            src={post.author?.avatar ? post.author.avatar : defaultAvatar}/>
                         <Comment.Content>
                             <Comment.Author
-                                as='a'>{getFromLocalStorage('userData')?.name ? getFromLocalStorage('userData')?.name : (
+                                as='a'>{post.author?.name ? post.author.name : (
                                 post.author?.email ? post.author?.email : post.author.phone
                             )}</Comment.Author>
                             <Comment.Metadata>
@@ -171,7 +171,7 @@ export default function Posts() {
 
 
 
-        {posts?.length === 0 && <Message negative>
+        {(posts?.length === 0 && !isLoading) && <Message negative>
             <Message.Header>We're sorry you haven't any posts</Message.Header>
         </Message>}
 

@@ -5,6 +5,7 @@ import {getFromLocalStorage} from "../../helper/storage";
 import {logout} from "../../utils/requests";
 import FriendShip from "./FriendShip";
 import Notifications from "./Notifications";
+import Dashboard from "./Dashboard";
 export default function Header() {
     const [activeItem, setActiveItem]  =useState('home');
     const [listShow, setListShow] = useState({
@@ -24,6 +25,7 @@ export default function Header() {
                 notifications: false
             });
         }else if(name === 'home'){
+            history.push(`/auth/dashboard`);
             setListShow({
                 friendShip: false,
                 notifications: false
@@ -48,14 +50,7 @@ export default function Header() {
         getFromLocalStorage('userData') ?
             <Segment inverted onClick={checkClick}>
                 <Menu icon='labeled' inverted secondary position='right'>
-                    <Menu.Item
-                        name='home'
-                        active={activeItem === 'home'}
-                        onClick={handleItemClick}
-                    >
-                        <Icon name='home' />
-                        <span className="menu-text">Home</span>
-                    </Menu.Item>
+                    <Dashboard name="home" active={activeItem === 'home'} handleClick={handleItemClick}/>
                     <Menu.Item
                         name='messages'
                         active={activeItem === 'messages'}

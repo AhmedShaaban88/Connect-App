@@ -115,7 +115,7 @@ constructor(props) {
                 }
 
 
-                {notifications?.length === 0 && <Message negative>
+                {(notifications?.length === 0 && !loading) && <Message negative>
                     <Message.Header>We're sorry you haven't any notifications</Message.Header>
                 </Message>}
 
