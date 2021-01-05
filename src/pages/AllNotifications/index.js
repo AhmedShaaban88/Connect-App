@@ -14,11 +14,12 @@ constructor(props) {
         this.loadMoreNotifications = this.loadMoreNotifications.bind(this);
     }
     componentDidMount() {
-        getYourNotifications(this);
+        getYourNotifications(this, this.state.page);
     }
     loadMoreNotifications = (page) => {
+
         if(this.state.total >= page){
-            getYourNotifications(this);
+            getYourNotifications(this, page);
         }
     };
     componentDidUpdate(prevProps, prevState, snapshot) {

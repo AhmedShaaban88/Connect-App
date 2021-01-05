@@ -272,8 +272,8 @@ const getYourFriendRequests = (_this, prevThis) => {
             });
         });
 };
-const getYourNotifications = (_this) => {
-    axios.get( `notifications?limit=10&page=${_this.state.page}`)
+const getYourNotifications = (_this, page) => {
+    axios.get( `notifications?limit=10&page=${page}`)
         .then(res => {
             _this.setState({
                 loading: false,
@@ -555,7 +555,6 @@ const getDashboard = (_this) => {
         if(_this.state.page > 1){
             _this.setState({
                 posts: [..._this.state.posts, ...res.data.docs],
-                moreLoader: false,
             });
         }else{
             _this.setState({
@@ -565,7 +564,8 @@ const getDashboard = (_this) => {
         }
         _this.setState({
             page: ++_this.state.page,
-            skip: _this.state.skip+=10
+            skip: _this.state.skip+=10,
+            moreLoader: false,
         });
     }).catch(err => {
         _this.setState({

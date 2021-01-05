@@ -6,6 +6,7 @@ import {logout} from "../../utils/requests";
 import FriendShip from "./FriendShip";
 import Notifications from "./Notifications";
 import Dashboard from "./Dashboard";
+import DashboardSocket from "../../publicSocket/DashboardSocket";
 export default function Header() {
     const [activeItem, setActiveItem]  =useState('home');
     const [listShow, setListShow] = useState({
@@ -25,6 +26,9 @@ export default function Header() {
                 notifications: false
             });
         }else if(name === 'home'){
+            if(history.location.pathname !== '/auth/dashboard'){
+                DashboardSocket.emit('seen', 'seen all');
+            }
             history.push(`/auth/dashboard`);
             setListShow({
                 friendShip: false,

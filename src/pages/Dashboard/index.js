@@ -20,6 +20,7 @@ import InfiniteScroll from "react-infinite-scroller";
 import {getFromLocalStorage} from "../../helper/storage";
 import defaultAvatar from "../../assets/images/user.png";
 import Moment from "react-moment";
+import DashboardSocket from "../../publicSocket/DashboardSocket";
 export default class DashboardPage extends Component{
     constructor(props) {
         super(props);
@@ -27,18 +28,28 @@ export default class DashboardPage extends Component{
             backendError: null, files: [],
             filesPrev: [], content: '',
             page: 1, total: 1,skip: 0,
+            newPosts: [],
             moreLoader: false,deletePostId: null,
             addPostLoader: false};
         this.loadMorePosts = this.loadMorePosts.bind(this);
         this.removePost = this.removePost.bind(this);
         this.likePostFunc = this.likePostFunc.bind(this);
         this.newPost = this.newPost.bind(this);
+        this.socketNewPosts = this.socketNewPosts.bind(this);
     }
     componentDidMount() {
         getDashboard(this);
+        DashboardSocket.on('new-post', (data) => {
+            this.setState(prevState => ({newPosts: [data, ...prevState.newPosts]}));
+        });
+    }
+    socketNewPosts(){
+        this.setState(prevState => ({
+            posts: [...this.state.newPosts,...prevState.posts],skip: prevState.skip + prevState.newPosts.length, newPosts: []}));
+        DashboardSocket.emit('seen', 'seen all');
     }
     loadMorePosts = (page) => {
-        if(this.state.total >= page){
+        if(this.state.total >= this.state.page && !this.state.moreLoader){
             this.setState({moreLoader: true});
             getDashboard(this);
         }
@@ -75,10 +86,11 @@ export default class DashboardPage extends Component{
         likePostDashboard(post._id, this);
     };
     render() {
-        const {loading, backendError, content, addPostLoader, posts, page, total, deletePostId, moreLoader} = this.state;
+        const {loading, backendError, content, addPostLoader, posts, page, total, deletePostId, moreLoader, newPosts} = this.state;
 
         return (
             <Container>
+                {newPosts.length > 0 && <Label color="red" size="large" floating className="new-post" onClick={this.socketNewPosts}>+New Posts</Label> }
                 <Form reply loading={addPostLoader}>
                     <Form.TextArea placeholder="What's on your mind?" value={content} onChange={e => this.setState({content: e.target.value})}/>
                     <CommentUpload _this={this} />

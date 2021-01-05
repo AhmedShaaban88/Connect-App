@@ -1,32 +1,28 @@
 import React, {Component} from "react";
-import {Icon, Image, Label, Menu} from "semantic-ui-react";
-import io from 'socket.io-client';
+import {Icon, Label, Menu} from "semantic-ui-react";
 import withToast from "../withToast";
-import {getFromLocalStorage} from "../../helper/storage";
-import defaultAvatar from "../../assets/images/user.png";
 import {withRouter} from "react-router";
-import FriendShipRequests from "../../pages/FriendShipRequests";
-import DashboardPage from "../../pages/Dashboard";
+import DashboardSocket from "../../publicSocket/DashboardSocket";
+
 class Dashboard extends Component {
     constructor(props) {
         super(props);
-        this.socket = null;
-        this.state = {new: false, post: null};
+        this.state = {new: false};
     }
     componentDidMount() {
-        this.socket = io('https://connect-app-v1.herokuapp.com/dashboard',
-            { transports: ['websocket'], query: {token: getFromLocalStorage('userData').token}, reconnectionAttempts: 10 });
-        this.socket.on('connect', () => {
+        DashboardSocket.on('connect', () => {
             console.log('connected dashboard');
         });
-        this.socket.on('new-post', (data) => {
-            this.setState({post: data, new: true});
+        DashboardSocket.on('new-post', () => {
+            this.setState({new: true});
+        });
+        DashboardSocket.on('seen all', (data) => {
+            this.setState({new: false});
         });
     }
 
     componentWillUnmount() {
-        this.socket.disconnect();
-        this.socket = null;
+        DashboardSocket.disconnect();
     }
 
     render(){

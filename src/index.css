@@ -142,6 +142,14 @@ a{
 .ui.empty.circular.label, .ui.empty.circular.labels .label{
   top: 0!important;
 }
+.new-post{
+  position: absolute;
+  z-index: 100;
+  margin: auto;
+  left: 42% !important;
+  top: 25% !important;
+  cursor: pointer!important;
+}
 @media screen and (max-width: 480px){
   .ui.menu{
     font-size: 0.8em!important;
