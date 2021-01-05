@@ -7,6 +7,7 @@ import FriendShip from "./FriendShip";
 import Notifications from "./Notifications";
 import Dashboard from "./Dashboard";
 import DashboardSocket from "../../publicSocket/DashboardSocket";
+import Messages from "./Messages";
 export default function Header() {
     const [activeItem, setActiveItem]  =useState('home');
     const [listShow, setListShow] = useState({
@@ -40,6 +41,13 @@ export default function Header() {
                 notifications: true
             });
         }
+        else if(name === 'messages'){
+            history.push(`/auth/messenger`);
+            setListShow({
+                friendShip: false,
+                notifications: false
+            });
+        }
     };
     const checkClick = (e) => {
         const elem = e.target.tagName;
@@ -55,18 +63,9 @@ export default function Header() {
             <Segment inverted onClick={checkClick}>
                 <Menu icon='labeled' inverted secondary position='right'>
                     <Dashboard name="home" active={activeItem === 'home'} handleClick={handleItemClick}/>
-                    <Menu.Item
-                        name='messages'
-                        active={activeItem === 'messages'}
-                        onClick={handleItemClick}
-                    >
-                        <Icon name='facebook messenger' />
-                        <span className="menu-text">Messages</span>
-                        <Label color='red'>100</Label>
-                    </Menu.Item>
+                    <Messages name="messages" active={activeItem === 'messages'} handleClick={handleItemClick}/>
                     <FriendShip name="friendship" active={listShow.friendShip === true} handleClick={handleItemClick}/>
                     <Notifications name="notifications" active={listShow.notifications === true} handleClick={handleItemClick}/>
-
                     <Menu.Menu position='right'>
                     <Dropdown item text={<Fragment>
                         <Icon name='user circle' />

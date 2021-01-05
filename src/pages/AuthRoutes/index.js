@@ -10,6 +10,7 @@ import Likes from "../Feed/Likes";
 import SearchFriends from "../SearchFriends";
 import EditComment from "../Feed/EditComment";
 import EditPost from "../Feed/EditPost";
+import Messenger from "../Messenger";
 
 export default function AuthRoutes() {
     return(
@@ -23,6 +24,7 @@ export default function AuthRoutes() {
              <PrivateRoute path="/auth/post/edit/:id" exact component={EditPost}/>
              <PrivateRoute path="/auth/post/:postId/:id" exact component={EditComment}/>
              <PrivateRoute path="/auth/search-friends" exact component={SearchFriends}/>
+             <PrivateRoute path="/auth/messenger" exact component={Messenger}/>
              <Route path="**" component={NotFound}/>
          </Switch>
         </Fragment>

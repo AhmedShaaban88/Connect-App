@@ -20,7 +20,6 @@ class Dashboard extends Component {
             this.setState({new: false});
         });
     }
-
     componentWillUnmount() {
         DashboardSocket.disconnect();
     }

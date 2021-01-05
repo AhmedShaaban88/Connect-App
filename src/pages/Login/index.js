@@ -27,7 +27,10 @@ export default function Login() {
             password: false,
         },
     );
-    const goHome = (link) => history.push(link);
+    const goHome = (link) => {
+        history.push(link);
+        window.location.reload();
+    };
     const handleSubmit = e => {
         e.preventDefault();
         const type = isNaN(Number(loginInput.email_phone)) ? 'email' : 'phone';
