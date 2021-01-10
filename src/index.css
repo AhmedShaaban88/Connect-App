@@ -55,9 +55,19 @@ a{
   overflow-x: hidden;
   cursor: pointer;
 }
+.lazy-parent-messages{
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  cursor: pointer;
+}
 .notifiy .notify-content{
   display: inline-block;
   margin-left: 0.6em;
+}
+.messages{
+  border: 1px solid #eeeeee;
+  padding: 15px!important;
 }
 .react-toast-notifications__toast--info .react-toast-notifications__toast__icon-wrapper{
   display: none!important;
@@ -149,6 +159,28 @@ a{
   left: 42% !important;
   top: 25% !important;
   cursor: pointer!important;
+}
+.unseen-message{
+  font-weight: bold;
+  color: black;
+}
+.seen-message{
+  color: darkgray;
+}
+.active-room{
+  background-color: #b1b1b185!important;
+}
+.friend-name{
+  display: inline-block;
+  margin-left: 0.4em;
+}
+.you .avatar{
+  float: right!important;
+}
+.you .content {
+  margin-right: 3.5em!important;
+  margin-left: 0!important;
+  text-align: right!important;
 }
 @media screen and (max-width: 480px){
   .ui.menu{

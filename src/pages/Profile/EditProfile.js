@@ -2,14 +2,18 @@ import React, {useReducer, useState} from "react";
 import {handleChange} from "../../helper/handleControlChange";
 import {passwordReg, nicknameReg, personalEmailReg, phoneReg} from "../../helper/regex";
 import BackendError from "../../components/BackendError";
-import {friendActions, updateProfile} from "../../utils/requests";
+import {friendActions, getMessages, updateProfile} from "../../utils/requests";
 import Avatar from "../../components/Avatar";
 import PreviewAvatar from "../../components/Avatar/previewAvatar";
 import {getFromLocalStorage} from "../../helper/storage";
 import {Button, Container, Form, Grid, Header, Segment} from "semantic-ui-react";
 import {useToasts} from "react-toast-notifications";
+import {useHistory} from "react-router";
+
 export default function EditProfile({user}) {
+    const history = useHistory();
     const [isLoading, setLoading] = useState(false);
+    const [isLoadingMessage, setLoadingMessage] = useState(false);
     const [friendLoading, setFriendLoading] = useState(false);
     const [backendError, setBackendError] = useState(null);
     const [avatarPrev, setAvatarPrev] = useState(user.avatar ? user.avatar : null);
@@ -68,6 +72,10 @@ export default function EditProfile({user}) {
     const friendActionFunc = (type, status) => {
         setFriendLoading(true);
         friendActions(type, user._id,setFriendLoading ,setBackendError, setLoginInput, status);
+    };
+    const joinChat = (e, id) => {
+        setLoadingMessage(true);
+        getMessages(id,setBackendError, setLoadingMessage, () => history.push({pathname: '/auth/messenger', state: user._id}));
     };
     return <Grid textAlign='center' style={{height: '30vh', padding: '0.5em'}} verticalAlign='middle'>
         {loginInput.editable ?  <Grid.Column style={{maxWidth: '100%'}}>
@@ -147,7 +155,7 @@ export default function EditProfile({user}) {
                 <Button positive loading={friendLoading} disabled={friendLoading} onClick={e => friendActionFunc('accept', 'accept')}>Accept</Button>
             </Button.Group>}
             {loginInput.status === 3 && <Button loading={friendLoading} disabled={friendLoading} secondary icon="user delete" onClick={e => friendActionFunc('remove', loginInput.status)} content="Remove Friend"/>}
-            <Button icon="envelope" content="Message" className="msg-btn" secondary/>
+            <Button icon="envelope" content="Message" className="msg-btn" loading={isLoadingMessage} disabled={isLoadingMessage} secondary onClick={e => joinChat(e, user._id)}/>
             {backendError && <BackendError error={backendError}/> }
         </Container>}
 

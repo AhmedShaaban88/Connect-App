@@ -115,7 +115,7 @@ class Comments extends Component{
                             </Comment.Content>
                         </Comment>
                     ))}
-                {(total >= page && !moreLoader && !loading) && <p className="text-center load-text" onClick={this.loadMoreComments}>Load More Comments</p> }
+                {(total >= page && !moreLoader && !loading && comments?.length > 0) && <p className="text-center load-text" onClick={this.loadMoreComments}>Load More Comments</p> }
                 {moreLoader && <Loader active inline='centered' /> }
                 <Header as='h3' dividing/>
                 <Form reply loading={addCommentLoader}>

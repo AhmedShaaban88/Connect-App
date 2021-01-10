@@ -593,6 +593,122 @@ const deletPostDashboard = (id, _this) => {
             });
         });
 };
+const getYourRooms = (_this) => {
+    axios.get(`messages/rooms?limit=10&skip=${_this.state.skipRoom}`).then(res => {
+        _this.setState({
+            loadingRooms: null,
+            loading: false,
+        });
+        if(_this.state.page > 1){
+            _this.setState({
+                rooms: [..._this.state.rooms, ...res.data.docs],
+            });
+        }else{
+            _this.setState({
+                total: Math.ceil(res.data.total/10),
+                rooms: res.data.docs
+            })
+        }
+        _this.setState({
+            page: ++_this.state.page,
+            skipRoom: _this.state.skipRoom+=10,
+            moreLoader: false,
+        });
+    }).catch(err => {
+        _this.setState({
+            backendError: catchError(err.response),
+            loading: false,
+            moreLoader: false,
+        });
+    })
+};
+const getMessages = (id,setBackendError, setLoader, callback) => {
+    axios.get(`messages/${id}`).then(res => {
+        setBackendError(null);
+        setLoader(false);
+        callback();
+    }).catch(err => {
+        setBackendError(catchError(err.response));
+        setLoader(false);
+    })
+};
+const getRoomMessages = (_this, id, skip, socket) => {
+    if(id !== _this.state.currentId){
+        _this.setState({
+            friend: null,
+            loadingChat: true,
+            currentId: id,
+            messages: [],
+            pageMessages: 1,
+            skip: 0,
+            content: '',
+            files: [],
+            filesPrev: [],
+            moreLoaderMessage: false,
+            newMessageLoader: false,
+        });
+    }
+    axios.get(`messages/${id}?limit=5&skip=${skip}`).then(res => {
+        _this.setState({
+            loadingChat: false,
+            backendError: null,
+        });
+        if(socket && _this.state.currentRoom) socket.emit('leave', _this.state.currentRoom);
+        if(socket) socket.emit('join', res.data.roomId);
+        if(_this.state.pageMessages > 1){
+            _this.setState({
+                messages: [..._this.state.messages, ...res.data.docs]
+
+            });
+        } else{
+            _this.setState({
+                totalMessages: Math.ceil(res.data.total/5),
+                messages: res.data.docs,
+                friend: res.data.friend,
+                currentRoom: res.data.roomId
+            });
+        }
+        _this.setState({
+            pageMessages: ++_this.state.pageMessages,
+            skip: _this.state.skip+=5,
+            moreLoaderMessage: false,
+        });
+    }).catch(err => {
+        _this.setState({
+            backendError: catchError(err.response),
+            loadingChat: false,
+            moreLoaderMessage: false,
+        });
+    })
+};
+const sendMessage = (_this, data) => {
+    axios.post(`messages/send-message/${_this.state.currentId}`, data).then(res => {
+        _this.setState({
+            backendError: null,
+            newMessageLoader: false,
+            skip: ++_this.state.skip,
+            content: '',
+            files:[],
+            filesPrev: [],
+            messages: [res.data, ..._this.state.messages]
+        });
+        _this.socket.emit('send message', res.data);
+    }).catch(err => {
+        _this.setState({
+            backendError: catchError(err.response),
+            newMessageLoader: false,
+        });
+    })
+};
+const seenMessage = (id, _this) => {
+    axios.put(`messages/seen/${id}`).then(res => {
+        _this.setState({messages: [res.data, ..._this.state.messages], skip: ++_this.state.skip});
+        _this.socket.emit('seen message', res.data);
+
+    }).catch(err => {
+        _this.socket.disconnect()
+    });
+};
 const logout = (goHome) => {
     localStorage.clear();
     axios.defaults.headers['Authorization'] = '';
@@ -600,7 +716,8 @@ const logout = (goHome) => {
 };
 const isAuthenticated = () => getFromLocalStorage('userData');
 export {login,register,
-    isAuthenticated,sendForgetCode,
+    isAuthenticated,
+    sendForgetCode,
     verifyAccount, resendVerifyCode,
     resetPassword,
     loginGoogle,
@@ -628,4 +745,9 @@ export {login,register,
     getDashboard,
     likePostDashboard,
     deletPostDashboard,
+    getYourRooms,
+    getMessages,
+    getRoomMessages,
+    sendMessage,
+    seenMessage,
     logout}
