@@ -58,9 +58,6 @@ class Notifications extends Component {
     componentDidMount() {
             this.socket = io('https://connect-app-v1.herokuapp.com/notifications',
                 { transports: ['websocket'], query: {token: getFromLocalStorage('userData').token}, reconnectionAttempts: 10 });
-            this.socket.on('connect', () => {
-                 console.log('connected notifications');
-             });
         this.socket.on('count', (data) => {
              this.setState({count: data});
         });

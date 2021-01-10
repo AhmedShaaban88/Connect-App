@@ -51,9 +51,6 @@ export default class Messenger extends Component {
     componentDidMount() {
         this.socket = io('https://connect-app-v1.herokuapp.com/messenger',
             { transports: ['websocket'], query: {token: getFromLocalStorage('userData').token}, reconnectionAttempts: 10 });
-        this.socket.on('connect', () => {
-            console.log('connected messanger');
-        });
         this.socket.on('user typing', msg => this.setState({typing: msg}));
         this.socket.on('stop user typing', msg => {
             this.setState({typing: null})
@@ -69,6 +66,8 @@ export default class Messenger extends Component {
         this.socket.on('seen', ({id, user}) => {
             const message = this.state.messages.find(msg => msg._id === id);
             message.seen = user;
+            const room = this.state.rooms.filter(room => room._id === this.state.currentRoom);
+            room.lastMessage = message;
             this.forceUpdate();
         });
         this.socket.on('seen all', ({length, user}) => {
@@ -236,7 +235,8 @@ export default class Messenger extends Component {
                                                 friend?.name ? friend?.name : (
                                                     friend?.email ? friend?.email : friend?.phone) : (getFromLocalStorage('userData')?.name ? getFromLocalStorage('userData')?.name : (getFromLocalStorage('userData')?.email ? getFromLocalStorage('userData')?.email : getFromLocalStorage('userData')?.phone))
                                             }</Comment.Author>
-                                                <Comment.Text>{message?.content ? message?.content : <Image.Group size='tiny'>
+                                                <Comment.Text>{message?.content}
+                                                <Image.Group size='tiny'>
                                                     {message?.media.map(media => (
                                                         isVideo(media.path) ? <Image key={media._id} as="a" href={media.path}
                                                                                      target='_blank'
@@ -244,7 +244,7 @@ export default class Messenger extends Component {
                                                             <Image key={media._id} as="a" href={media.path}
                                                                    target='_blank' src={media.path}/>
                                                     ))}
-                                                </Image.Group>}</Comment.Text>
+                                                </Image.Group></Comment.Text>
                                                 <div>
                                                     <Moment fromNow>
                                                         {new Date(message.delivered_at)}

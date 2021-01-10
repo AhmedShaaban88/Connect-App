@@ -10,9 +10,6 @@ class Messages extends Component {
         this.state = {count: null};
     }
     componentDidMount() {
-        MessagesSocket.on('connect', () => {
-            console.log('connected messages');
-        });
         MessagesSocket.on('count', count => {
             this.setState({count: count});
         });

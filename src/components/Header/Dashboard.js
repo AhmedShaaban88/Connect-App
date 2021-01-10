@@ -10,9 +10,6 @@ class Dashboard extends Component {
         this.state = {new: false};
     }
     componentDidMount() {
-        DashboardSocket.on('connect', () => {
-            console.log('connected dashboard');
-        });
         DashboardSocket.on('new-post', () => {
             this.setState({new: true});
         });
