@@ -74,15 +74,19 @@ export default class DashboardPage extends Component{
         });
         deletPostDashboard(id, this);
     };
-    likePostFunc = (e,post) =>{
+    likePostFunc = (e,post, index) =>{
+        let _posts = [...this.state.posts];
+        let _post = {...this.state.posts[index]};
         if(post.likes.indexOf(getFromLocalStorage('userData')?.userId) > -1){
-            post.likes = post.likes.filter(like => like !== getFromLocalStorage('userData')?.userId);
+            _post.likes = _post.likes.filter(like => like !== getFromLocalStorage('userData')?.userId);
+            _posts[index] = _post;
+
         }else{
-            post.likes = post.likes.concat(getFromLocalStorage('userData')?.userId);
+            _post.likes = _post.likes.concat(getFromLocalStorage('userData')?.userId);
+            _posts[index] = _post;
+
         }
-        this.setState({
-            posts: [...this.state.posts, post]
-        });
+        this.setState({posts: _posts});
         likePostDashboard(post._id, this);
     };
     render() {
@@ -135,7 +139,7 @@ export default class DashboardPage extends Component{
                         useWindow={false}
                     >
                         <Comment.Group>
-                            {posts.map(post => (
+                            {posts.map((post, index) => (
                                 <Comment key={post._id} className={deletePostId === post._id ? 'deleting' : ''}>
                                     {(post?.author._id === getFromLocalStorage('userData')?.userId || post?.author === getFromLocalStorage('userData')?.userId) && deletePostId === null &&
                                     <Dropdown className="float-right" icon={<span>
@@ -177,7 +181,7 @@ export default class DashboardPage extends Component{
                                                 <Button as='div' labelPosition='right'>
                                                     <Button
                                                         color={post.likes.indexOf(getFromLocalStorage('userData')?.userId) > -1 ? 'red' : 'white'}
-                                                        onClick={e => this.likePostFunc(e, post)}
+                                                        onClick={e => this.likePostFunc(e, post, index)}
                                                     >
                                                         <Icon name='heart'/>
                                                         {post.likes.indexOf(getFromLocalStorage('userData')?.userId) > -1 ? 'Unlink' : 'Like'}
